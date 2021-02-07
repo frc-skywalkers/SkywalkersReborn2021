@@ -14,9 +14,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
-import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotGearing;
-import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotMotor;
-import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotWheelSize;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.system.plant.DCMotor;
@@ -90,7 +87,7 @@ public class Drivetrain extends SubsystemBase {
            more subtle turning control with not quickturn (for quick traversing across field) 
     */
 
-    // arcadeDrive(controller, speed);
+    arcadeDrive(controller, speed);
     // tankDrive(controller, speed);
     // curvatureDrive(controller, speed);
   }
@@ -100,7 +97,8 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void arcadeDrive(XboxController controller, double speed) {
-    drive.arcadeDrive(controller.getY(Hand.kLeft) * speed, controller.getX(Hand.kRight) * speed);
+    //drive.arcadeDrive(controller.getY(Hand.kLeft) * speed, controller.getX(Hand.kRight) * speed);
+    drive.arcadeDrive(controller.getRawAxis(1) * speed, controller.getRawAxis(0) * speed);
   }
 
   public void tankDrive(XboxController controller, double speed) {
