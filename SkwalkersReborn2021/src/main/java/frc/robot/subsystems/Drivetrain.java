@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -45,11 +47,9 @@ public class Drivetrain extends SubsystemBase {
   private final DifferentialDrive drive = new DifferentialDrive(m_leftGroup, m_rightGroup);
 
 
-  private Pose2d pose;
-
   private final ADXRS450_Gyro m_gyro = new ADXRS450_Gyro();
 
-  private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(getHeading());
+  private DifferentialDriveOdometry m_odometry;
 
  
 
@@ -157,10 +157,6 @@ public class Drivetrain extends SubsystemBase {
   }
 
 
-  public Pose2d getPose() {
-    return pose;
-  }
-
   //Encoder getters
 
   public double getAverageEncoderDistance() {
@@ -201,6 +197,14 @@ public class Drivetrain extends SubsystemBase {
       return m_leftEncoder.getRate();
     }
     
+  }
+
+  public double getDrawnCurrentAmps() {
+    return driveSim.getCurrentDrawAmps();
+  }
+
+  public Pose2d getPose() {
+    return m_odometry.getPoseMeters();
   }
 
 
@@ -245,13 +249,18 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
-    pose = m_odometry.update(getHeading(), getLeftEncoderDistance(), getRightEncoderDistance());
+    m_odometry.update(
+      getHeading(), 
+      getLeftEncoderDistance(), 
+      getRightEncoderDistance());
     field.setRobotPose(m_odometry.getPoseMeters());
   }
 
   @Override
   public void simulationPeriodic() {
-    driveSim.setInputs(leftMaster.get() * RobotController.getInputVoltage(), rightMaster.get() * RobotController.getInputVoltage());
+    driveSim.setInputs(
+      leftMaster.get() * RobotController.getInputVoltage(), 
+      rightMaster.get() * RobotController.getInputVoltage());
     driveSim.update(0.02);
 
     m_leftEncoderSim.setDistance(driveSim.getLeftPositionMeters());
@@ -259,6 +268,6 @@ public class Drivetrain extends SubsystemBase {
     m_rightEncoderSim.setDistance(driveSim.getRightPositionMeters());
     m_rightEncoderSim.setRate(driveSim.getRightVelocityMetersPerSecond());
 
-    m_gyroSim.setAngle(driveSim.getHeading().getDegrees());
+    m_gyroSim.setAngle(-driveSim.getHeading().getDegrees());
   }
 }
