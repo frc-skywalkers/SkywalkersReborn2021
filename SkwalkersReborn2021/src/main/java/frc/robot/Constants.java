@@ -28,6 +28,15 @@ public final class Constants {
         public static final Button kOuttakeButton = Button.kB;
     }
 
+    public static final class AutoConstants {
+
+		public static double kMaxSpeedMetersPerSecond;
+		public static double kMaxAccelerationMetersPerSecondSquared;
+		public static double kRamseteB;
+		public static double kRamseteZeta;
+
+    }
+
     public static final class DriveConstants {
         public static final int kLeftMasterPort = 1;
         public static final int kLeftFollowerPort = 2;
@@ -38,6 +47,18 @@ public final class Constants {
         public static final TalonFXInvertType kRightInvertType = TalonFXInvertType.CounterClockwise;
 
         public static final double kDriveSpeed = 0.8;
+
+        public static final double kMaxSpeed = 3.0; // meters per second->needs to be inputted
+        public static final double kMaxAngularSpeed = 2 * Math.PI; // one rotation per second
+        public static final double kTrackWidth = 0.381 * 2; // meters->needs to be inputted
+        public static final double kWheelRadius = 0.0762; // meters->needs to be inputted
+        public static final int kEncoderResolution = 2048; // <-precision for integrated talon FX encoder
+        public static final double distancePerPulseFactor = (2 * Math.PI * kWheelRadius)/ kEncoderResolution;
+        
+        public static double ks;
+		public static double kv;
+		public static double ka;
+		public static double kPDriveVel;
     }
 
     public final class IntakeConstants {
