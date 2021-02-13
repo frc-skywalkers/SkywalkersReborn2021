@@ -7,6 +7,8 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -30,10 +32,10 @@ public final class Constants {
 
     public static final class AutoConstants {
 
-		public static double kMaxSpeedMetersPerSecond;
-		public static double kMaxAccelerationMetersPerSecondSquared;
-		public static double kRamseteB;
-		public static double kRamseteZeta;
+		public static double kMaxSpeedMetersPerSecond = 3;
+		public static double kMaxAccelerationMetersPerSecondSquared = 3;
+		public static double kRamseteB = 2;
+		public static double kRamseteZeta = 0.7;
 
     }
 
@@ -48,17 +50,17 @@ public final class Constants {
 
         public static final double kDriveSpeed = 0.8;
 
-        public static final double kMaxSpeed = 3.0; // meters per second->needs to be inputted
-        public static final double kMaxAngularSpeed = 2 * Math.PI; // one rotation per second
-        public static final double kTrackWidth = 0.381 * 2; // meters->needs to be inputted
-        public static final double kWheelRadius = 0.0762; // meters->needs to be inputted
-        public static final int kEncoderResolution = 2048; // <-precision for integrated talon FX encoder
-        public static final double distancePerPulseFactor = (2 * Math.PI * kWheelRadius)/ kEncoderResolution;
+        public static final double kTrackWidth = 0.5558; // meters->needs to be inputted
+        public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidth);
         
-        public static double ks;
-		public static double kv;
-		public static double ka;
-		public static double kPDriveVel;
+        public static final double kWheelRadius = Units.inchesToMeters(3); // meters->needs to be inputted
+        public static final int kEncoderResolution = 2048; // <-precision for integrated talon FX encoder
+        public static final double kDistancePerPulseFactor = (2 * Math.PI * kWheelRadius)/ kEncoderResolution;
+        
+        public static double ksVolts = 022;
+		public static double kvVoltSecondsPerMeter = 1.98;
+		public static double kaVoltSecondsSquaredPerMeter = 0.2;
+		public static double kPDriveVel = 8.5;
     }
 
     public final class IntakeConstants {
