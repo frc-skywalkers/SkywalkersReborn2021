@@ -50,7 +50,7 @@ public class RobotContainer {
   private final Arm arm = new Arm();
 
   private XboxController driveController = new XboxController(Constants.OIConstants.kDriverControllerPort);
-  private XboxController operatorController = new XboxController(Constants.OIConstants.kOperatorControllerPort);
+  //private XboxController operatorController = new XboxController(Constants.OIConstants.kOperatorControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -58,9 +58,9 @@ public class RobotContainer {
       new RunCommand(
         () -> drive.driveWithJoysticks(driveController, Constants.DriveConstants.kDriveSpeed), drive));
 
-    arm.setDefaultCommand(
-      new RunCommand(
-        () -> arm.moveArm(operatorController.getY(Hand.kLeft)), arm));
+    // arm.setDefaultCommand(
+    //   new RunCommand(
+    //     () -> arm.moveArm(operatorController.getY(Hand.kLeft)), arm));
       
     // Configure the button bindings
     configureButtonBindings();
@@ -75,16 +75,22 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     // Toggle Quick Turn when driver presses the Toggle Quick Turn button
-    new JoystickButton(driveController, Constants.OIConstants.kToggleQuickTurnButton.value).whenPressed(drive::toggleQuickTurn);
+    //new JoystickButton(driveController, Constants.OIConstants.kToggleQuickTurnButton.value).whenPressed(drive::toggleQuickTurn);
 
     // Run roller to intake balls when operator presses the intake button
-    new JoystickButton(operatorController, Constants.OIConstants.kIntakeButton.value).whenPressed(intake::intake);
+    new JoystickButton(driveController, Constants.OIConstants.kIntakeButton.value).whenPressed(intake::intake);
 
     // Stop roller when operator presses the stop roller button
-    new JoystickButton(operatorController, Constants.OIConstants.kStopRollerButton.value).whenPressed(intake::stopRoller);
+    new JoystickButton(driveController, Constants.OIConstants.kStopRollerButton.value).whenPressed(intake::stopRoller);
 
     // Run roller to outtake balls when operator presses the outtake button
-    new JoystickButton(operatorController, Constants.OIConstants.kOuttakeButton.value).whenPressed(intake::outtake);
+    new JoystickButton(driveController, Constants.OIConstants.kOuttakeButton.value).whenPressed(intake::outtake);
+
+
+    new JoystickButton(driveController, Constants.OIConstants.kLiftArmButton.value).whileHeld(() -> arm.moveArm(Constants.ArmConstants.kArmSpeed));
+
+    
+    new JoystickButton(driveController, Constants.OIConstants.kLowerArmButton.value).whileHeld(() -> arm.moveArm(-Constants.ArmConstants.kArmSpeed));
 
   
   }

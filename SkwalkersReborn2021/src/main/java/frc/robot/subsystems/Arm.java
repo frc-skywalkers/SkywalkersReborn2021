@@ -12,11 +12,11 @@ import frc.robot.Constants;
 
 public class Arm extends SubsystemBase {
   /** Creates a new Arm. */
-  private final CANSparkMax arm = new CANSparkMax(Constants.IntakeConstants.kArmPort, MotorType.kBrushless);
+  private final CANSparkMax arm = new CANSparkMax(Constants.ArmConstants.kArmPort, MotorType.kBrushless);
   
   public Arm() {
     arm.restoreFactoryDefaults();
-    arm.setInverted(Constants.IntakeConstants.kArmInvert);
+    arm.setInverted(Constants.ArmConstants.kArmInvert);
 
   }
 
