@@ -65,7 +65,7 @@ public final class Constants {
         public static final int kEncoderResolution = 2048; // <-precision for integrated talon FX encoder
         public static final double kDistancePerPulseFactor = (2 * Math.PI * kWheelRadius)/ kEncoderResolution;
         
-        public static double ksVolts = 022;
+        public static double ksVolts = 0.22;
 		public static double kvVoltSecondsPerMeter = 1.98;
 		public static double kaVoltSecondsSquaredPerMeter = 0.2;
 		public static double kPDriveVel = 8.5;
