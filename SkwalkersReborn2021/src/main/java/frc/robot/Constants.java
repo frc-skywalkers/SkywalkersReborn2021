@@ -22,10 +22,13 @@ public final class Constants {
         public static final int kDriverControllerPort = 0;
         public static final int kOperatorControllerPort = 1;
 
-        public static final Button kToggleQuickTurnButton = Button.kA;
+        //public static final Button kToggleQuickTurnButton = Button.kA;
         public static final Button kIntakeButton = Button.kA;
-        public static final Button kStopRollerButton = Button.kX;
-        public static final Button kOuttakeButton = Button.kB;
+        public static final Button kStopRollerButton = Button.kB;
+        public static final Button kOuttakeButton = Button.kX;
+        public static final Button kLiftArmButton = Button.kBumperRight;
+        public static final Button kLowerArmButton = Button.kBumperRight;
+        
     }
 
     public static final class DriveConstants {
@@ -40,14 +43,21 @@ public final class Constants {
         public static final double kDriveSpeed = 0.8;
     }
 
-    public final class IntakeConstants {
-        public static final int kArmPort = 5;
+    public static final class IntakeConstants {
+        
         public static final int kRollerPort = 6;
 
-        public static final boolean kArmInvert = false;
+        
         public static final boolean kRollerInvert = false;
 
         public static final double kIntakeSpeed = 0.8;
         public static final double kOuttakeSpeed = 0.8;
+    }
+
+    public static final class ArmConstants {
+        public static final int kArmPort = 5;
+        public static final boolean kArmInvert = false;
+        public static final double kArmSpeed = 0.2;
+
     }
 }
