@@ -6,7 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
@@ -28,17 +29,18 @@ public class RobotContainer {
   private final Arm arm = new Arm();
 
   private XboxController driveController = new XboxController(Constants.OIConstants.kDriverControllerPort);
-  //private XboxController operatorController = new XboxController(Constants.OIConstants.kOperatorControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     drive.setDefaultCommand(
       new RunCommand(
-        () -> drive.driveWithJoysticks(driveController, Constants.DriveConstants.kDriveSpeed), drive));
-
-    // arm.setDefaultCommand(
-    //   new RunCommand(
-    //     () -> arm.moveArm(operatorController.getY(Hand.kLeft)), arm));
+        // () -> drive.arcadeDrive(driveController.getRawAxis(OIConstants.kLeftY) * DriveConstants.kDriveSpeed,
+        //   driveController.getRawAxis(OIConstants.kRightX) * DriveConstants.kDriveSpeed), drive)
+        //() -> drive.tankDrive(driveController.getRawAxis(OIConstants.kLeftY),
+        //    driveController.getRawAxis(OIConstants.kRightY), DriveConstants.kDriveSpeed), drive)
+        () -> drive.curvatureDrive(driveController.getRawAxis(OIConstants.kLeftY),
+         driveController.getRawAxis(OIConstants.kRightX), DriveConstants.kDriveSpeed), drive)
+        );
       
     // Configure the button bindings
     configureButtonBindings();
@@ -53,21 +55,17 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     // Toggle Quick Turn when driver presses the Toggle Quick Turn button
-    //new JoystickButton(driveController, Constants.OIConstants.kToggleQuickTurnButton.value).whenPressed(drive::toggleQuickTurn);
+    new JoystickButton(driveController, Constants.OIConstants.kToggleQuickTurnButton.value).whenPressed(drive::toggleQuickTurn);
 
-    // Run roller to intake balls when operator presses the intake button
     new JoystickButton(driveController, Constants.OIConstants.kIntakeButton.value).whenPressed(intake::intake);
 
-    // Stop roller when operator presses the stop roller button
     new JoystickButton(driveController, Constants.OIConstants.kStopRollerButton.value).whenPressed(intake::stopRoller);
 
-    // Run roller to outtake balls when operator presses the outtake button
     new JoystickButton(driveController, Constants.OIConstants.kOuttakeButton.value).whenPressed(intake::outtake);
-
 
     new JoystickButton(driveController, Constants.OIConstants.kLiftArmButton.value).whileHeld(() -> arm.moveArm(Constants.ArmConstants.kArmSpeed));
 
-    
+
     new JoystickButton(driveController, Constants.OIConstants.kLowerArmButton.value).whileHeld(() -> arm.moveArm(-Constants.ArmConstants.kArmSpeed));
 
   
