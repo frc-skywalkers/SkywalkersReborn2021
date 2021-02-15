@@ -21,15 +21,20 @@ import edu.wpi.first.wpilibj.util.Units;
 public final class Constants {
 
     public static final class OIConstants {
-        public static final int kDriverControllerPort = 0;
-        public static final int kOperatorControllerPort = 1;
+        public static final int kDriverControllerPort = 1;
+        //public static final int kOperatorControllerPort = 0;
 
-        //public static final Button kToggleQuickTurnButton = Button.kA;
+        public static final int kLeftY = 1;
+        public static final int kRightX = 4;
+        public static final int kRightY = 5;
+
+        public static final Button kToggleQuickTurnButton = Button.kY;
         public static final Button kIntakeButton = Button.kA;
         public static final Button kStopRollerButton = Button.kB;
         public static final Button kOuttakeButton = Button.kX;
         public static final Button kLiftArmButton = Button.kBumperRight;
-        public static final Button kLowerArmButton = Button.kBumperRight;
+        public static final Button kLowerArmButton = Button.kBumperLeft;
+		
         
     }
 
@@ -48,8 +53,8 @@ public final class Constants {
         public static final int kRightMasterPort = 3;
         public static final int kRightFollowerPort = 4;
 
-        public static final TalonFXInvertType kLeftInvertType = TalonFXInvertType.Clockwise;
-        public static final TalonFXInvertType kRightInvertType = TalonFXInvertType.CounterClockwise;
+        public static final TalonFXInvertType kLeftInvertType = TalonFXInvertType.CounterClockwise;
+        public static final TalonFXInvertType kRightInvertType = TalonFXInvertType.Clockwise;
 
         public static final double kDriveSpeed = 0.8;
 
@@ -73,14 +78,14 @@ public final class Constants {
         
         public static final boolean kRollerInvert = false;
 
-        public static final double kIntakeSpeed = 0.8;
-        public static final double kOuttakeSpeed = 0.8;
+        public static final double kIntakeSpeed = -0.3;
+        public static final double kOuttakeSpeed = 0.3;
     }
 
     public static final class ArmConstants {
         public static final int kArmPort = 5;
-        public static final boolean kArmInvert = false;
-        public static final double kArmSpeed = 0.2;
+        public static final boolean kArmInvert = true;
+        public static final double kArmSpeed = 0.07;
 
     }
 }

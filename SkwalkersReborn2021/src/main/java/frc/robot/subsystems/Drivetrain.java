@@ -14,8 +14,6 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -110,9 +108,9 @@ public class Drivetrain extends SubsystemBase {
     rightFollower.setNeutralMode(NeutralMode.Brake);
 
     leftMaster.setInverted(Constants.DriveConstants.kLeftInvertType);
-    leftFollower.setInverted(InvertType.FollowMaster);
+    leftFollower.setInverted(Constants.DriveConstants.kLeftInvertType);
     rightMaster.setInverted(Constants.DriveConstants.kRightInvertType);
-    rightFollower.setInverted(InvertType.FollowMaster);
+    rightFollower.setInverted(Constants.DriveConstants.kRightInvertType);
 
     drive.setRightSideInverted(false);
 
@@ -132,35 +130,20 @@ public class Drivetrain extends SubsystemBase {
   
   }
 
-  // Drive Functions
-  public void driveWithJoysticks(XboxController controller, double speed) {
-    /* Experiment with Drive methods:
-         - Arcade Drive: control forward and control turning
-         - Tank Drive: control left and right
-         - Curvature Drive: normal arcade drive when quick turn, 
-           more subtle turning control with not quickturn (for quick traversing across field) 
-    */
-
-    arcadeDrive(controller, speed);
-    // tankDrive(controller, speed);
-    // curvatureDrive(controller, speed);
-  }
-
   public void stop() {
     drive.stopMotor();
   }
 
-  public void arcadeDrive(XboxController controller, double speed) {
-    //drive.arcadeDrive(controller.getY(Hand.kLeft) * speed, controller.getX(Hand.kRight) * speed);
-    drive.arcadeDrive(controller.getRawAxis(1) * speed, controller.getRawAxis(0) * speed);
+  public void arcadeDrive(double fwd, double rot, double speed) {
+    drive.arcadeDrive(fwd * speed, rot * speed);
   }
 
-  public void tankDrive(XboxController controller, double speed) {
-    drive.tankDrive(controller.getY(Hand.kLeft) * speed, controller.getY(Hand.kRight) * speed);
+  public void tankDrive(double leftPwr, double rightPwr, double speed) {
+    drive.tankDrive(leftPwr * speed, rightPwr * speed);
   }
 
-  public void curvatureDrive(XboxController controller, double speed) {
-    drive.curvatureDrive(controller.getY(Hand.kLeft) * speed, controller.getX(Hand.kRight) * speed, isQuickTurn);
+  public void curvatureDrive(double fwd, double rot, double speed) {
+    drive.curvatureDrive(fwd * speed, rot * speed, isQuickTurn);
   }
 
   public void toggleQuickTurn() {
