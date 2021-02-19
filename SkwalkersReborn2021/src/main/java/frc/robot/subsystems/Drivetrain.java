@@ -4,20 +4,22 @@
 
 package frc.robot.subsystems;
 
+import com.analog.adis16448.frc.ADIS16448_IMU;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.system.plant.DCMotor;
-import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpiutil.math.VecBuilder;
 import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
 
 public class Drivetrain extends SubsystemBase {
   /** Creates a new Drivetrain. */
@@ -31,24 +33,14 @@ public class Drivetrain extends SubsystemBase {
 
   private final DifferentialDrive drive = new DifferentialDrive(m_leftGroup, m_rightGroup);
 
-  private final DifferentialDrivetrainSim driveSim = new DifferentialDrivetrainSim(
-    DCMotor.getFalcon500(2),       // 2 Falcon 500 motors on each side of the drivetrain.
-    10.71,                    // 10.71:1 gearing reduction.
-    7.5,                     // MOI of 7.5 kg m^2 (from CAD model).
-    60.0,                    // The mass of the robot is 60 kg.
-    Units.inchesToMeters(6), // The robot uses 3" radius wheels.
-    0.5558,                  // The track width is 0.5558 meters.
+  private final ADIS16448_IMU m_gyro = new ADIS16448_IMU();
 
-    // The standard deviations for measurement noise:
-    // x and y:          0.001 m
-    // heading:          0.001 rad
-    // l and r velocity: 0.1   m/s
-    // l and r position: 0.005 m
-    VecBuilder.fill(0.001, 0.001, 0.001, 0.1, 0.1, 0.005, 0.005));
-
-  private Field2d field = new Field2d();
+  private DifferentialDriveOdometry m_odometry;
 
   private boolean isQuickTurn = true;
+
+
+  private Field2d field = new Field2d();
 
   public Drivetrain() {
 
@@ -73,6 +65,10 @@ public class Drivetrain extends SubsystemBase {
     drive.setRightSideInverted(false);
 
     SmartDashboard.putData("Field", field);
+
+    m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d());
+    
+    resetDrivetrainEncoders();
   
   }
 
@@ -96,18 +92,97 @@ public class Drivetrain extends SubsystemBase {
     isQuickTurn = !isQuickTurn;
   }
 
+  // Getters
+
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(getLeftEncoderRate(), getRightEncoderRate());
+  }
+
+
+  //Encoder getters
+
+  public double getAverageEncoderDistance() {
+    return (getLeftEncoderDistance() + getRightEncoderDistance()) / 2.0;
+  }
+
+  public double getLeftEncoderDistance(){
+    return leftMaster.getSelectedSensorPosition() * Constants.DriveConstants.kDistancePerPulseFactor;
+    
+  }
+
+  public double getRightEncoderDistance(){
+    return rightMaster.getSelectedSensorPosition() * Constants.DriveConstants.kDistancePerPulseFactor;
+    
+  }
+
+  public double getRightEncoderRate() {
+      return rightMaster.getSelectedSensorVelocity() * Constants.DriveConstants.kDistancePerPulseFactor / 60;
+    
+  }
+
+  public double getLeftEncoderRate() {
+      return leftMaster.getSelectedSensorVelocity() * Constants.DriveConstants.kDistancePerPulseFactor / 60;
+    
+  }
+
+
+  public Pose2d getPose() {
+    return m_odometry.getPoseMeters();
+  }
+
+
+  //Setters
+  
+  public void tankDriveVolts(double leftVolts, double rightVolts) {
+    var batteryVoltage = RobotController.getBatteryVoltage();
+    if (Math.max(Math.abs(leftVolts), Math.abs(rightVolts)) > batteryVoltage) {
+      leftVolts *= batteryVoltage / 12.0;
+      rightVolts *= batteryVoltage / 12.0;
+    }
+    m_leftGroup.setVoltage(leftVolts);
+    m_rightGroup.setVoltage(rightVolts);
+    drive.feed();
+  }
+
+  public void setMaxOutput(double maxOutput) {
+    drive.setMaxOutput(maxOutput);
+  }
+
+  //Resetters
+
+  public void resetDrivetrainEncoders(){
+    leftMaster.setSelectedSensorPosition(0);
+    rightMaster.setSelectedSensorPosition(0);
+  }
+
+  public void resetOdometry(Pose2d pose) {
+    resetDrivetrainEncoders();
+    m_odometry.resetPosition(pose, Rotation2d.fromDegrees(getHeading()));
+  }
+  
+
+  public void zeroHeading() {
+    m_gyro.reset();
+  }
+
+ 
+  public double getHeading() {
+    return Math.IEEEremainder(m_gyro.getAngle(), 360) * (DriveConstants.kGyroReversed ? -1.0: 1.0);
+  }
+
+  
+  public double getTurnRate() {
+    return -m_gyro.getRate();
+  }
+
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    m_odometry.update(
+      Rotation2d.fromDegrees(getHeading()), 
+      getLeftEncoderDistance(), 
+      getRightEncoderDistance());
+    field.setRobotPose(getPose());
   }
 
-  @Override
-  public void simulationPeriodic() {
-    driveSim.setInputs(leftMaster.get() * RobotController.getInputVoltage(), rightMaster.get() * RobotController.getInputVoltage());
-
-    driveSim.update(0.02);
-
-
-
-  }
+  
 }
