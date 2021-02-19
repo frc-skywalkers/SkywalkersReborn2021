@@ -8,7 +8,10 @@ import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.system.LinearSystem;
+import edu.wpi.first.wpilibj.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.util.Units;
+import edu.wpi.first.wpiutil.math.numbers.N2;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -63,12 +66,25 @@ public final class Constants {
         
         public static final double kWheelRadius = Units.inchesToMeters(3); // meters->needs to be inputted
         public static final int kEncoderResolution = 2048; // <-precision for integrated talon FX encoder
-        public static final double kDistancePerPulseFactor = (2 * Math.PI * kWheelRadius)/ kEncoderResolution;
+        public static final double kGearReduciton = 10.71;
+        public static final double kDistancePerPulseFactor = (2 * Math.PI * kWheelRadius)/ kEncoderResolution / kGearReduciton;
         
         public static double ksVolts = 0.22;
 		public static double kvVoltSecondsPerMeter = 1.98;
 		public static double kaVoltSecondsSquaredPerMeter = 0.2;
-		public static double kPDriveVel = 8.5;
+        public static double kPDriveVel = 8.5;
+
+        public static final double kvVoltSecondsPerRadian = 1.5;
+        public static final double kaVoltSecondsSquaredPerRadian = 0.3;
+
+        public static final LinearSystem<N2, N2, N2> kDrivetrainPlant =
+            LinearSystemId.identifyDrivetrainSystem(
+                kvVoltSecondsPerMeter,
+                kaVoltSecondsSquaredPerMeter,
+                kvVoltSecondsPerRadian,
+                kaVoltSecondsSquaredPerRadian);
+        
+		public static boolean kGyroReversed = true;
     }
 
     public static final class IntakeConstants {
