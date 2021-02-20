@@ -38,6 +38,8 @@ public class RobotContainer {
   private final Drivetrain drive = new Drivetrain();
   private final Intake intake = new Intake();
   private final Arm arm = new Arm();
+  private final String [] paths = {"paths/GalacticSearchABlue.wpilib.json", "paths/GalacticSearchARed.wpilib.json", "paths/GalacticSearchBBlue.wpilib.json", "paths/GalacticSearchBRed.wpilib.json", "paths/Slalom.wpilib.json", "paths/slalomV1.wpilib.json"};
+  private final int pathToRun = 4;
 
   private XboxController driveController = new XboxController(Constants.OIConstants.kDriverControllerPort);
 
@@ -87,7 +89,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    String trajectoryJSON = "paths/slalomV1.wpilib.json";
+    String trajectoryJSON = paths[pathToRun];
     Trajectory trajectory = new Trajectory();
     try {
       Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
