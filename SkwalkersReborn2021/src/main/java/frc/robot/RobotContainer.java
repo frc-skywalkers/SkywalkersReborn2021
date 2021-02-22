@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
@@ -41,19 +42,22 @@ public class RobotContainer {
   private final String [] paths = {"paths/GalacticSearchABlue.wpilib.json", "paths/GalacticSearchARed.wpilib.json", "paths/GalacticSearchBBlue.wpilib.json", "paths/GalacticSearchBRed.wpilib.json", "paths/Slalom.wpilib.json", "paths/slalomV1.wpilib.json"};
   private final int pathToRun = 4;
 
+  private final SlewRateLimiter speedLimiter = new SlewRateLimiter(3);
+  private final SlewRateLimiter rotLimiter = new SlewRateLimiter(3);
+
   private XboxController driveController = new XboxController(Constants.OIConstants.kDriverControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    var xSpeed = -speedLimiter.calculate(driveController.getRawAxis(OIConstants.kLeftY));
+    
+    var rot = -rotLimiter.calculate(driveController.getRawAxis(OIConstants.kRightX));
+    
     drive.setDefaultCommand(
       new RunCommand(
-        // () -> drive.arcadeDrive(driveController.getRawAxis(OIConstants.kLeftY) * DriveConstants.kDriveSpeed,
-        //   driveController.getRawAxis(OIConstants.kRightX) * DriveConstants.kDriveSpeed), drive)
-        //() -> drive.tankDrive(driveController.getRawAxis(OIConstants.kLeftY),
-        //    driveController.getRawAxis(OIConstants.kRightY), DriveConstants.kDriveSpeed), drive)
-        () -> drive.curvatureDrive(-driveController.getRawAxis(OIConstants.kLeftY),
-         -driveController.getRawAxis(OIConstants.kRightX), DriveConstants.kDriveSpeed), drive)
-        );
+        () -> drive.curvatureDrive(xSpeed,rot, DriveConstants.kDriveSpeed), drive)
+      );
       
     // Configure the button bindings
     configureButtonBindings();
