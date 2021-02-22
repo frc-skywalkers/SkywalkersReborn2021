@@ -51,8 +51,8 @@ public class RobotContainer {
         //   driveController.getRawAxis(OIConstants.kRightX) * DriveConstants.kDriveSpeed), drive)
         //() -> drive.tankDrive(driveController.getRawAxis(OIConstants.kLeftY),
         //    driveController.getRawAxis(OIConstants.kRightY), DriveConstants.kDriveSpeed), drive)
-        () -> drive.curvatureDrive(driveController.getRawAxis(OIConstants.kLeftY),
-         driveController.getRawAxis(OIConstants.kRightX), DriveConstants.kDriveSpeed), drive)
+        () -> drive.curvatureDrive(-driveController.getRawAxis(OIConstants.kLeftY),
+         -driveController.getRawAxis(OIConstants.kRightX), DriveConstants.kDriveSpeed), drive)
         );
       
     // Configure the button bindings
@@ -89,7 +89,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    String trajectoryJSON = paths[pathToRun];
+    String trajectoryJSON = "paths/Slalomv2.wpilib.json";
     Trajectory trajectory = new Trajectory();
     try {
       Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);

@@ -4,10 +4,14 @@
 
 package frc.robot.subsystems;
 
-import com.analog.adis16448.frc.ADIS16448_IMU;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -33,7 +37,7 @@ public class Drivetrain extends SubsystemBase {
 
   private final DifferentialDrive drive = new DifferentialDrive(m_leftGroup, m_rightGroup);
 
-  private final ADIS16448_IMU m_gyro = new ADIS16448_IMU();
+  private final ADXRS450_Gyro m_gyro = new ADXRS450_Gyro();
 
   private DifferentialDriveOdometry m_odometry;
 
@@ -42,12 +46,23 @@ public class Drivetrain extends SubsystemBase {
 
   private Field2d field = new Field2d();
 
+  NetworkTableEntry m_xEntry = NetworkTableInstance.getDefault().getTable("troubleshooting").getEntry("X");
+  NetworkTableEntry m_yEntry = NetworkTableInstance.getDefault().getTable("troubleshooting").getEntry("Y");
+
   public Drivetrain() {
 
     leftMaster.configFactoryDefault();
     leftFollower.configFactoryDefault();
     rightMaster.configFactoryDefault();
     rightFollower.configFactoryDefault();
+
+    TalonFXConfiguration configs = new TalonFXConfiguration();
+    configs.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
+
+    leftMaster.configAllSettings(configs);
+    leftFollower.configAllSettings(configs);
+    rightMaster.configAllSettings(configs);
+    rightFollower.configAllSettings(configs);
 
     leftFollower.follow(leftMaster);
     rightFollower.follow(rightMaster);
@@ -61,6 +76,8 @@ public class Drivetrain extends SubsystemBase {
     leftFollower.setInverted(Constants.DriveConstants.kLeftInvertType);
     rightMaster.setInverted(Constants.DriveConstants.kRightInvertType);
     rightFollower.setInverted(Constants.DriveConstants.kRightInvertType);
+
+    
 
     drive.setRightSideInverted(false);
 
@@ -85,6 +102,8 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public void curvatureDrive(double fwd, double rot, double speed) {
+    SmartDashboard.putNumber("fwd", fwd);
+    SmartDashboard.putNumber("rot", rot);
     drive.curvatureDrive(fwd * speed, rot * speed, isQuickTurn);
   }
 
@@ -182,6 +201,18 @@ public class Drivetrain extends SubsystemBase {
       getLeftEncoderDistance(), 
       getRightEncoderDistance());
     field.setRobotPose(getPose());
+
+    SmartDashboard.putNumber("gryo-angle", getHeading());
+    SmartDashboard.putNumber("left-distance", getLeftEncoderDistance());
+    SmartDashboard.putNumber("right-distance", getRightEncoderDistance());
+    SmartDashboard.putNumber("right-power", rightMaster.getMotorOutputPercent());
+    SmartDashboard.putNumber("left-power", leftMaster.getMotorOutputPercent());
+
+    var translation = m_odometry.getPoseMeters().getTranslation();
+    m_xEntry.setNumber(translation.getX());
+    m_yEntry.setNumber(translation.getY());
+    SmartDashboard.putNumber("x", translation.getX());
+    SmartDashboard.putNumber("y", translation.getX());
   }
 
   

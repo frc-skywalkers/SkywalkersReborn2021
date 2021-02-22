@@ -52,28 +52,28 @@ public final class Constants {
         public static final int kRightMasterPort = 3;
         public static final int kRightFollowerPort = 4;
 
-        public static final TalonFXInvertType kLeftInvertType = TalonFXInvertType.CounterClockwise;
-        public static final TalonFXInvertType kRightInvertType = TalonFXInvertType.Clockwise;
+        public static final TalonFXInvertType kLeftInvertType = TalonFXInvertType.Clockwise;
+        public static final TalonFXInvertType kRightInvertType = TalonFXInvertType.CounterClockwise;
 
-        public static final double kDriveSpeed = 0.0;
+        public static final double kDriveSpeed = 0.3;
 
         public static final double kTrackWidth = 0.5558; // meters->needs to be inputted
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidth);
         
         public static final double kWheelRadius = Units.inchesToMeters(3); // meters->needs to be inputted
         public static final int kEncoderResolution = 2048; // <-precision for integrated talon FX encoder
-        public static final double kGearReduciton = 10.71;
+        public static final double kGearReduciton = 10.75;
         public static final double kDistancePerPulseFactor = (2 * Math.PI * kWheelRadius)/ kEncoderResolution / kGearReduciton;
         
         public static double ksVolts = 0.22;
 		public static double kvVoltSecondsPerMeter = 1.98;
 		public static double kaVoltSecondsSquaredPerMeter = 0.2;
-        public static double kPDriveVel = 8.5;
+        public static double kPDriveVel = 0;
 
         public static final double kvVoltSecondsPerRadian = 1.5;
         public static final double kaVoltSecondsSquaredPerRadian = 0.3;
         
-		public static boolean kGyroReversed = true;
+		public static boolean kGyroReversed = false;
     }
 
     public static final class IntakeConstants {
