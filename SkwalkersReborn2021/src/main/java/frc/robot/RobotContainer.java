@@ -59,22 +59,19 @@ public class RobotContainer {
   };
   private final int pathToRun = 4;
 
-  private final SlewRateLimiter speedLimiter = new SlewRateLimiter(3);
-  private final SlewRateLimiter rotLimiter = new SlewRateLimiter(3);
-
   private XboxController driveController = new XboxController(Constants.OIConstants.kDriverControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-
-    var xSpeed = -speedLimiter.calculate(driveController.getRawAxis(OIConstants.kLeftY));
-    
-    var rot = -rotLimiter.calculate(driveController.getRawAxis(OIConstants.kRightX));
     
     drive.setDefaultCommand(
-      new RunCommand(
-        () -> drive.curvatureDrive(xSpeed,rot, DriveConstants.kDriveSpeed), drive)
-      );
+        new RunCommand(
+            () ->
+                drive.arcadeDrive(
+                    -driveController.getRawAxis(OIConstants.kLeftY),
+                    -driveController.getRawAxis(OIConstants.kRightY),
+                    DriveConstants.kDriveSpeed),
+            drive));
       
     // Configure the button bindings
     configureButtonBindings();
