@@ -34,7 +34,6 @@ public final class Constants {
         public static final Button kOuttakeButton = Button.kX;
         public static final Button kLiftArmButton = Button.kBumperRight;
         public static final Button kLowerArmButton = Button.kBumperLeft;
-		
         
     }
     public static final class AutoConstants {
@@ -51,6 +50,8 @@ public final class Constants {
         public static final int kLeftFollowerPort = 2;
         public static final int kRightMasterPort = 3;
         public static final int kRightFollowerPort = 4;
+        
+        public static final int PigeonIMUPort = 0;
 
         public static final TalonFXInvertType kLeftInvertType = TalonFXInvertType.Clockwise;
         public static final TalonFXInvertType kRightInvertType = TalonFXInvertType.CounterClockwise;
@@ -74,6 +75,7 @@ public final class Constants {
         public static final double kaVoltSecondsSquaredPerRadian = 0.3;
         
 		public static boolean kGyroReversed = false;
+
     }
 
     public static final class IntakeConstants {

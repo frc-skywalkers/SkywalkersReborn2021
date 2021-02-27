@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.sensors.PigeonIMU;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -37,7 +38,8 @@ public class Drivetrain extends SubsystemBase {
 
   private final DifferentialDrive drive = new DifferentialDrive(m_leftGroup, m_rightGroup);
 
-  private final ADXRS450_Gyro m_gyro = new ADXRS450_Gyro();
+  //private final ADXRS450_Gyro m_gyro = new ADXRS450_Gyro();
+  private final PigeonIMU m_gyro = new PigeonIMU(Constants.DriveConstants.PigeonIMUPort);
 
   private DifferentialDriveOdometry m_odometry;
 
@@ -83,7 +85,8 @@ public class Drivetrain extends SubsystemBase {
 
     SmartDashboard.putData("Field", field);
 
-    m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d());
+    //m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d());
+    m_odometry = new DifferentialDriveOdometry(getRotation2dPdg());
     
     resetDrivetrainEncoders();
   
@@ -181,17 +184,39 @@ public class Drivetrain extends SubsystemBase {
   
 
   public void zeroHeading() {
-    m_gyro.reset();
+    //m_gyro.reset();
+    m_gyro.setYaw(0);
   }
 
  
   public double getHeading() {
-    return Math.IEEEremainder(m_gyro.getAngle(), 360) * (DriveConstants.kGyroReversed ? -1.0: 1.0);
+    return Math.IEEEremainder(getAnglePdg(), 360) * (DriveConstants.kGyroReversed ? -1.0: 1.0);
+    //SYNTAX SUGAR -> return getRotation2dPdg().getDegrees();
   }
 
   
   public double getTurnRate() {
-    return -m_gyro.getRate();
+    //return -m_gyro.getRate();
+    return -getRatePdg();
+  }
+
+  //CUSTOM DEFINED FUNCTIONS (FOR PIGEON IMU CLASS (NOT THE ADI...))
+  public Rotation2d getRotation2dPdg(){
+    double YPR [] = new double [3];
+    m_gyro.getYawPitchRoll(YPR);
+    return Rotation2d.fromDegrees(YPR[0]);
+  }
+
+  public double getAnglePdg(){
+    double YPR [] = new double [3];
+    m_gyro.getYawPitchRoll(YPR);
+    return YPR[0];
+  }
+
+  public double getRatePdg(){
+    double XYZ [] = new double [3];
+    m_gyro.getRawGyro(XYZ);
+    return XYZ[0];
   }
 
   @Override
