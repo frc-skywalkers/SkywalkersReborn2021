@@ -8,8 +8,13 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
+import javax.lang.model.util.ElementScanner6;
+
 import com.ctre.phoenix.sensors.PigeonIMU;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -27,15 +32,19 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryParameterizer.TrajectoryGenerationException;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -49,27 +58,35 @@ public class RobotContainer {
   private final Drivetrain drive = new Drivetrain();
   private final Intake intake = new Intake();
   private final Arm arm = new Arm();
-  private final String [] paths = {
-    "paths/GalacticSearchABlue.wpilib.json",
-    "paths/GalacticSearchARed.wpilib.json",
-    "paths/GalacticSearchBBlue.wpilib.json",
-    "paths/GalacticSearchBRed.wpilib.json",
-    "paths/Slalom.wpilib.json",
-    "paths/slalomV1.wpilib.json"
-  };
-  private final int pathToRun = 4;
+
+  // private final String [] paths = {
+  //   "paths/GalacticSearchABlue.wpilib.json",
+  //   "paths/GalacticSearchARed.wpilib.json",
+  //   "paths/GalacticSearchBBlue.wpilib.json",
+  //   "paths/GalacticSearchBRed.wpilib.json",
+  //   "paths/Slalom.wpilib.json",
+  //   "paths/slalomV1.wpilib.json"
+  // };
+  // private final int pathToRun = 4;
 
   private XboxController driveController = new XboxController(Constants.OIConstants.kDriverControllerPort);
 
+  private NetworkTableInstance inst = NetworkTableInstance.getDefault();
+  private NetworkTable table = inst.getTable("datatable");
+  private double pathIndex = table.getEntry("path").getDouble(-1);
+  
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    
+
+    System.out.println("PATH INDEX::::::" + pathIndex);
+
     drive.setDefaultCommand(
         new RunCommand(
             () ->
-                drive.arcadeDrive(
+                drive.curvatureDrive(
                     -driveController.getRawAxis(OIConstants.kLeftY),
-                    -driveController.getRawAxis(OIConstants.kRightY),
+                    -driveController.getRawAxis(OIConstants.kRightX),
                     DriveConstants.kDriveSpeed),
             drive));
       
@@ -108,43 +125,37 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
 
-    var autoVoltageConstraint = 
-      new DifferentialDriveVoltageConstraint(
-        new SimpleMotorFeedforward(
-          DriveConstants.ksVolts, 
-          DriveConstants.kvVoltSecondsPerMeter,
-          DriveConstants.kaVoltSecondsSquaredPerMeter), 
-        DriveConstants.kDriveKinematics, 
-        10);
+    // var autoVoltageConstraint = 
+    //   new DifferentialDriveVoltageConstraint(
+    //     new SimpleMotorFeedforward(
+    //       DriveConstants.ksVolts, 
+    //       DriveConstants.kvVoltSecondsPerMeter,
+    //       DriveConstants.kaVoltSecondsSquaredPerMeter), 
+    //     DriveConstants.kDriveKinematics, 
+    //     10);
     
-    TrajectoryConfig config = 
-      new TrajectoryConfig(
-        AutoConstants.kMaxSpeedMetersPerSecond, 
-        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-      .setKinematics(DriveConstants.kDriveKinematics)
-      .addConstraint(autoVoltageConstraint);
+    // TrajectoryConfig config = 
+    //   new TrajectoryConfig(
+    //     AutoConstants.kMaxSpeedMetersPerSecond, 
+    //     AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+    //   .setKinematics(DriveConstants.kDriveKinematics)
+    //   .addConstraint(autoVoltageConstraint);
 
-    Trajectory slalom = 
-      TrajectoryGenerator.generateTrajectory(
-        new Pose2d(1.23, 0.55, new Rotation2d(0)), 
-        List.of(
-          new Translation2d(3.03, 2.21), 
-          new Translation2d(4.64, 2.75),
-          new Translation2d(6.68, 1.43),
-          new Translation2d(7.34, 0.64),
-          new Translation2d(8.36, 0.75),
-          new Translation2d(8.75, 1.47),
-          new Translation2d(7.83, 2.44),
-          new Translation2d(6.91, 2.01),
-          new Translation2d(6.68, 1.43),
-          new Translation2d(6.38, 0.89),
-          new Translation2d(4.6, 0.48),
-          new Translation2d(2.82, 0.95)), 
-        new Pose2d(1.25, 2.31, new Rotation2d(180)), 
-        config);
+    // Paths paths = new Paths();
+
+    //Trajectory trajectory = paths.getGSAR();
+    // if (pathIndex == 0.0) {
+    //   trajectory = paths.getGSAB();
+    // } else if (pathIndex == 1.0) {
+    //    trajectory = paths.getGSAR();
+    // } else {
+    //   System.out.println("ERROR IN GETTING NETWORK TABLE ENTRY");
+    //   return new InstantCommand();
+    // }
+    
 
 
-    // String trajectoryJSON = "paths/Slalomv2.wpilib.json";
+    // String trajectoryJSON = "paths/GSAB.wpilib.json";
     // Trajectory trajectory = new Trajectory();
     // try {
     //   Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
@@ -153,8 +164,44 @@ public class RobotContainer {
     //   DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
     // }
 
+    // RamseteCommand ramseteCommand = new RamseteCommand(
+    //     trajectory,
+    //     drive::getPose,
+    //     new RamseteController(
+    //       AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
+    //     new SimpleMotorFeedforward(
+    //       DriveConstants.ksVolts, 
+    //       DriveConstants.kvVoltSecondsPerMeter, 
+    //       DriveConstants.kaVoltSecondsSquaredPerMeter),
+    //     DriveConstants.kDriveKinematics,
+    //     drive::getWheelSpeeds,
+    //     new PIDController(DriveConstants.kPDriveVel, 0, 0),
+    //     new PIDController(DriveConstants.kPDriveVel, 0, 0),
+    //     drive::tankDriveVolts,
+    //     drive
+    // );
+
+    // Reset odometry to the starting pose of the trajectory.
+    
+
+    // Run path following command, then stop at the end.
+    // return ramseteCommand
+    // .alongWith(new RunCommand(intake::intake, intake))
+    // .andThen(() -> drive.tankDriveVolts(0, 0));
+
+    return ramseteInit()
+    .alongWith(new RunCommand(intake::intake, intake))
+    .andThen(() -> drive.tankDriveVolts(0, 0))
+    .andThen(() -> intake.stopRoller());
+  }
+
+  public Command ramseteInit() {
+    Paths paths = new Paths();
+
+    Trajectory trajectory = paths.getDetectedPath(2.0);
+
     RamseteCommand ramseteCommand = new RamseteCommand(
-        slalom,
+        trajectory,
         drive::getPose,
         new RamseteController(
           AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
@@ -170,10 +217,8 @@ public class RobotContainer {
         drive
     );
 
-    // Reset odometry to the starting pose of the trajectory.
-    drive.resetOdometry(slalom.getInitialPose());
+    drive.resetOdometry(trajectory.getInitialPose());
 
-    // Run path following command, then stop at the end.
-    return ramseteCommand.andThen(() -> drive.tankDriveVolts(0, 0));
+    return ramseteCommand;
   }
 }

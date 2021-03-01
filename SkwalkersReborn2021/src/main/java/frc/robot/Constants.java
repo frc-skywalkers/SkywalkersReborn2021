@@ -38,8 +38,8 @@ public final class Constants {
     }
     public static final class AutoConstants {
 
-		public static double kMaxSpeedMetersPerSecond = 3;
-		public static double kMaxAccelerationMetersPerSecondSquared = 3;
+		public static double kMaxSpeedMetersPerSecond = 0.5;
+		public static double kMaxAccelerationMetersPerSecondSquared = 0.5;
 		public static double kRamseteB = 2;
 		public static double kRamseteZeta = 0.7;
 
@@ -51,7 +51,7 @@ public final class Constants {
         public static final int kRightMasterPort = 3;
         public static final int kRightFollowerPort = 4;
         
-        public static final int PigeonIMUPort = 0;
+        public static final int PigeonIMUPort = 8;
 
         public static final TalonFXInvertType kLeftInvertType = TalonFXInvertType.Clockwise;
         public static final TalonFXInvertType kRightInvertType = TalonFXInvertType.CounterClockwise;
@@ -63,18 +63,18 @@ public final class Constants {
         
         public static final double kWheelRadius = Units.inchesToMeters(3); // meters->needs to be inputted
         public static final int kEncoderResolution = 2048; // <-precision for integrated talon FX encoder
-        public static final double kGearReduciton = 10.75;
+        public static final double kGearReduciton = 10.71;
         public static final double kDistancePerPulseFactor = (2 * Math.PI * kWheelRadius)/ kEncoderResolution / kGearReduciton;
         
         public static double ksVolts = 0.22;
 		public static double kvVoltSecondsPerMeter = 1.98;
 		public static double kaVoltSecondsSquaredPerMeter = 0.2;
-        public static double kPDriveVel = 0;
+        public static double kPDriveVel = 0.232;
 
         public static final double kvVoltSecondsPerRadian = 1.5;
         public static final double kaVoltSecondsSquaredPerRadian = 0.3;
         
-		public static boolean kGyroReversed = false;
+		public static boolean kGyroReversed = true;
 
     }
 
@@ -85,8 +85,8 @@ public final class Constants {
         
         public static final boolean kRollerInvert = false;
 
-        public static final double kIntakeSpeed = -0.25;
-        public static final double kOuttakeSpeed = 0.25;
+        public static final double kIntakeSpeed = -0.7;
+        public static final double kOuttakeSpeed = 0.7;
     }
 
     public static final class ArmConstants {
