@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
@@ -236,8 +237,8 @@ public class Drivetrain extends SubsystemBase {
     var translation = m_odometry.getPoseMeters().getTranslation();
     m_xEntry.setNumber(translation.getX());
     m_yEntry.setNumber(translation.getY());
-    SmartDashboard.putNumber("x", translation.getX());
-    SmartDashboard.putNumber("y", translation.getX());
+    SmartDashboard.putNumber("x", Units.metersToFeet(translation.getX()));
+    SmartDashboard.putNumber("y", Units.metersToFeet(translation.getX()));
   }
 
   

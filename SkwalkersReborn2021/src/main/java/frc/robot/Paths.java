@@ -19,6 +19,7 @@ public class Paths {
     
     private Trajectory GSAB;
     private Trajectory GSAR;
+    private Trajectory slalom;
 
     public Paths() {
         // config = cf;
@@ -76,6 +77,15 @@ public class Paths {
             DriverStation.reportError("Unable to open trajectory: " + abJSON, ex.getStackTrace());
         }
 
+        String slalomJSON = "paths/slalom37.wpilib.json";
+        slalom = new Trajectory();
+        try {
+            Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(slalomJSON);
+            slalom = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+        } catch (IOException ex) {
+            DriverStation.reportError("Unable to open trajectory: " + slalomJSON, ex.getStackTrace());
+        }
+
 
         
     }
@@ -92,6 +102,10 @@ public class Paths {
             return GSAR;
             
         }
+    }
+
+    public Trajectory getSlalom() {
+        return slalom;
     }
 
     

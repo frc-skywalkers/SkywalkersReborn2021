@@ -190,7 +190,7 @@ public class RobotContainer {
     // .andThen(() -> drive.tankDriveVolts(0, 0));
 
     return ramseteInit()
-    .alongWith(new RunCommand(intake::intake, intake))
+    // .alongWith(new RunCommand(intake::intake, intake))
     .andThen(() -> drive.tankDriveVolts(0, 0))
     .andThen(() -> intake.stopRoller());
   }
@@ -198,7 +198,7 @@ public class RobotContainer {
   public Command ramseteInit() {
     Paths paths = new Paths();
 
-    Trajectory trajectory = paths.getDetectedPath(2.0);
+    Trajectory trajectory = paths.getSlalom();
 
     RamseteCommand ramseteCommand = new RamseteCommand(
         trajectory,

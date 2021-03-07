@@ -64,12 +64,12 @@ public final class Constants {
         public static final double kWheelRadius = Units.inchesToMeters(3); // meters->needs to be inputted
         public static final int kEncoderResolution = 2048; // <-precision for integrated talon FX encoder
         public static final double kGearReduciton = 10.71;
-        public static final double kDistancePerPulseFactor = (2 * Math.PI * kWheelRadius)/ kEncoderResolution / kGearReduciton;
+        public static final double kDistancePerPulseFactor = (2 * Math.PI * kWheelRadius)/ kEncoderResolution / kGearReduciton * 0.968502;
         
-        public static double ksVolts = 0.22;
-		public static double kvVoltSecondsPerMeter = 1.98;
-		public static double kaVoltSecondsSquaredPerMeter = 0.2;
-        public static double kPDriveVel = 0.232;
+        public static double ksVolts = 0.552;
+		public static double kvVoltSecondsPerMeter = 0.726;
+		public static double kaVoltSecondsSquaredPerMeter = 0.077;
+        public static double kPDriveVel = 2.18;
 
         public static final double kvVoltSecondsPerRadian = 1.5;
         public static final double kaVoltSecondsSquaredPerRadian = 0.3;
