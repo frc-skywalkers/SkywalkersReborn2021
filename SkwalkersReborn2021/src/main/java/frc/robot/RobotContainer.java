@@ -37,10 +37,12 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.MoveArmForTime;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -124,64 +126,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-
-    // var autoVoltageConstraint = 
-    //   new DifferentialDriveVoltageConstraint(
-    //     new SimpleMotorFeedforward(
-    //       DriveConstants.ksVolts, 
-    //       DriveConstants.kvVoltSecondsPerMeter,
-    //       DriveConstants.kaVoltSecondsSquaredPerMeter), 
-    //     DriveConstants.kDriveKinematics, 
-    //     10);
-    
-    // TrajectoryConfig config = 
-    //   new TrajectoryConfig(
-    //     AutoConstants.kMaxSpeedMetersPerSecond, 
-    //     AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-    //   .setKinematics(DriveConstants.kDriveKinematics)
-    //   .addConstraint(autoVoltageConstraint);
-
-    // Paths paths = new Paths();
-
-    //Trajectory trajectory = paths.getGSAR();
-    // if (pathIndex == 0.0) {
-    //   trajectory = paths.getGSAB();
-    // } else if (pathIndex == 1.0) {
-    //    trajectory = paths.getGSAR();
-    // } else {
-    //   System.out.println("ERROR IN GETTING NETWORK TABLE ENTRY");
-    //   return new InstantCommand();
-    // }
-    
-
-
-    // String trajectoryJSON = "paths/GSAB.wpilib.json";
-    // Trajectory trajectory = new Trajectory();
-    // try {
-    //   Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-    //   trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-    // } catch (IOException ex) {
-    //   DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
-    // }
-
-    // RamseteCommand ramseteCommand = new RamseteCommand(
-    //     trajectory,
-    //     drive::getPose,
-    //     new RamseteController(
-    //       AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
-    //     new SimpleMotorFeedforward(
-    //       DriveConstants.ksVolts, 
-    //       DriveConstants.kvVoltSecondsPerMeter, 
-    //       DriveConstants.kaVoltSecondsSquaredPerMeter),
-    //     DriveConstants.kDriveKinematics,
-    //     drive::getWheelSpeeds,
-    //     new PIDController(DriveConstants.kPDriveVel, 0, 0),
-    //     new PIDController(DriveConstants.kPDriveVel, 0, 0),
-    //     drive::tankDriveVolts,
-    //     drive
-    // );
-
-    // Reset odometry to the starting pose of the trajectory.
     
 
     // Run path following command, then stop at the end.
@@ -189,10 +133,17 @@ public class RobotContainer {
     // .alongWith(new RunCommand(intake::intake, intake))
     // .andThen(() -> drive.tankDriveVolts(0, 0));
 
-    return ramseteInit()
-    // .alongWith(new RunCommand(intake::intake, intake))
-    .andThen(() -> drive.tankDriveVolts(0, 0))
-    .andThen(() -> intake.stopRoller());
+    // return ramseteInit()
+    // // .alongWith(new RunCommand(intake::intake, intake))
+    // .andThen(() -> drive.tankDriveVolts(0, 0))
+    // .andThen(() -> intake.stopRoller());
+
+    return new MoveArmForTime(arm, 3)
+    .andThen(new WaitCommand(3))
+    .andThen(ramseteInit())
+    .andThen(() -> drive.tankDriveVolts(0, 0));
+
+    
   }
 
   public Command ramseteInit() {
@@ -220,5 +171,9 @@ public class RobotContainer {
     drive.resetOdometry(trajectory.getInitialPose());
 
     return ramseteCommand;
+  }
+
+  public void setPath(double path) {
+    pathIndex = path;
   }
 }
