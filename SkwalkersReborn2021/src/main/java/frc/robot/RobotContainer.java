@@ -37,6 +37,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.DetectPath;
 import frc.robot.commands.MoveArmForTime;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
@@ -47,6 +48,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -139,7 +141,7 @@ public class RobotContainer {
     // .andThen(() -> intake.stopRoller());
 
     return new MoveArmForTime(arm, 3)
-    .andThen(new WaitCommand(3))
+    .andThen(new WaitUntilCommand(new DetectPath()::isFinished))
     .andThen(ramseteInit())
     .andThen(() -> drive.tankDriveVolts(0, 0));
 
@@ -149,7 +151,7 @@ public class RobotContainer {
   public Command ramseteInit() {
     Paths paths = new Paths();
 
-    Trajectory trajectory = paths.getSlalom();
+    Trajectory trajectory = paths.getDetectedPath();
 
     RamseteCommand ramseteCommand = new RamseteCommand(
         trajectory,

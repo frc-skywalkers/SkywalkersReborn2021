@@ -20,6 +20,7 @@ public class Paths {
     private Trajectory GSAB;
     private Trajectory GSAR;
     private Trajectory slalom;
+    public static double pathIndex = -1;
 
     public Paths() {
         // config = cf;
@@ -90,11 +91,11 @@ public class Paths {
         
     }
 
-    public Trajectory getDetectedPath(double index) {
-        if (index == 1.0) {
+    public Trajectory getDetectedPath() {
+        if (pathIndex == 1.0) {
             System.out.println("RED A---------------");
             return GSAR;
-        } else if (index == 2.0) {
+        } else if (pathIndex == 2.0) {
             System.out.println("Blue A-------------");
             return GSAB;
         } else {

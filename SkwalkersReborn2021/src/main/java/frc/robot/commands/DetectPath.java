@@ -4,47 +4,42 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
-import frc.robot.subsystems.Arm;
 
-public class MoveArmForTime extends CommandBase {
-  /** Creates a new MoveArmForTime. */
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
-  private Arm arm;
-  private boolean finished;
-  private Timer timer;
-  private double seconds;
+import frc.robot.Paths;
 
-  public MoveArmForTime(Arm a, double secs) {
+public class DetectPath extends CommandBase {
+  /** Creates a new Detectpath. */
+
+  private NetworkTableInstance inst = NetworkTableInstance.getDefault();
+  private NetworkTable table = inst.getTable("datatable");
+  
+  public DetectPath() {
     // Use addRequirements() here to declare subsystem dependencies.
-    arm = a;
-    addRequirements(arm);
-    seconds = secs;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    timer.reset();
-    timer.start();
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    arm.moveArm(Constants.ArmConstants.kLowerArmSpeed);
+    Paths.pathIndex = table.getEntry("path").getDouble(-1);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (timer.get() >= seconds) ? true: false;
+    return (Paths.pathIndex < 1) ? true: false;
   }
+
+
 }
