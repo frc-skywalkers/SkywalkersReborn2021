@@ -113,9 +113,9 @@ public class RobotContainer {
 
     new JoystickButton(driveController, Constants.OIConstants.kOuttakeButton.value).whenPressed(intake::outtake);
 
-    new JoystickButton(driveController, Constants.OIConstants.kLiftArmButton.value).whileHeld(() -> arm.moveArm(Constants.ArmConstants.kArmSpeed));
+    new JoystickButton(driveController, Constants.OIConstants.kLiftArmButton.value).whileHeld(() -> arm.moveArm(Constants.ArmConstants.kLiftArmSpeed));
 
-    new JoystickButton(driveController, Constants.OIConstants.kLowerArmButton.value).whileHeld(() -> arm.moveArm(-Constants.ArmConstants.kArmSpeed));
+    new JoystickButton(driveController, Constants.OIConstants.kLowerArmButton.value).whileHeld(() -> arm.moveArm(Constants.ArmConstants.kLowerArmSpeed));
 
   
   }

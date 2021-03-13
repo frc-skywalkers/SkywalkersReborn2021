@@ -34,7 +34,7 @@ public class MoveArmForTime extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    arm.moveArm(-Constants.ArmConstants.kArmSpeed);
+    //arm.moveArm(-Constants.ArmConstants.kArmSpeed);
   }
 
   // Called once the command ends or is interrupted.

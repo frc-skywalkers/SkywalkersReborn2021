@@ -56,7 +56,7 @@ public final class Constants {
         public static final TalonFXInvertType kLeftInvertType = TalonFXInvertType.Clockwise;
         public static final TalonFXInvertType kRightInvertType = TalonFXInvertType.CounterClockwise;
 
-        public static final double kDriveSpeed = 0.3;
+        public static final double kDriveSpeed = 0.0;
 
         public static final double kTrackWidth = 0.5558; // meters->needs to be inputted
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidth);
@@ -85,14 +85,15 @@ public final class Constants {
         
         public static final boolean kRollerInvert = false;
 
-        public static final double kIntakeSpeed = -0.7;
-        public static final double kOuttakeSpeed = 0.7;
+        public static final double kIntakeSpeed = -0.4;
+        public static final double kOuttakeSpeed = 0.4;
     }
 
     public static final class ArmConstants {
         public static final int kArmPort = 5;
         public static final boolean kArmInvert = true;
-        public static final double kArmSpeed = 0.07;
+        public static final double kLiftArmSpeed = 0.1;
+        public static final double kLowerArmSpeed = -0.05;
 
     }
 }
