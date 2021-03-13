@@ -90,6 +90,7 @@ public class Drivetrain extends SubsystemBase {
     m_odometry = new DifferentialDriveOdometry(getRotation2dPdg());
     
     resetDrivetrainEncoders();
+    zeroHeading();
   
   }
 
@@ -190,7 +191,8 @@ public class Drivetrain extends SubsystemBase {
 
  
   public double getHeading() {
-    return Math.IEEEremainder(getAnglePdg(), 360) * (DriveConstants.kGyroReversed ? -1.0: 1.0);
+    //return Math.IEEEremainder(getAnglePdg(), 360) * (DriveConstants.kGyroReversed ? -1.0: 1.0);
+    return Math.IEEEremainder(getRotation2dPdg().getDegrees(), 360);
   }
 
   

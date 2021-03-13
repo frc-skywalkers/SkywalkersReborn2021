@@ -90,7 +90,7 @@ public class RobotContainer {
             () ->
                 drive.curvatureDrive(
                     -driveController.getRawAxis(OIConstants.kLeftY),
-                    -driveController.getRawAxis(OIConstants.kRightX),
+                    driveController.getRawAxis(OIConstants.kRightX),
                     DriveConstants.kDriveSpeed),
             drive));
       
@@ -135,15 +135,15 @@ public class RobotContainer {
     // .alongWith(new RunCommand(intake::intake, intake))
     // .andThen(() -> drive.tankDriveVolts(0, 0));
 
-    // return ramseteInit()
-    // // .alongWith(new RunCommand(intake::intake, intake))
-    // .andThen(() -> drive.tankDriveVolts(0, 0))
-    // .andThen(() -> intake.stopRoller());
+    return ramseteInit()
+    .alongWith(new RunCommand(intake::intake, intake))
+    .andThen(() -> drive.tankDriveVolts(0, 0))
+    .andThen(() -> intake.stopRoller());
 
-    return new MoveArmForTime(arm, 3)
-    .andThen(new WaitUntilCommand(new DetectPath()::isFinished))
-    .andThen(ramseteInit())
-    .andThen(() -> drive.tankDriveVolts(0, 0));
+    // return new MoveArmForTime(arm, 3)
+    // .andThen(new WaitUntilCommand(new DetectPath()::isFinished))
+    // .andThen(ramseteInit())
+    // .andThen(() -> drive.tankDriveVolts(0, 0));
 
     
   }
@@ -151,7 +151,7 @@ public class RobotContainer {
   public Command ramseteInit() {
     Paths paths = new Paths();
 
-    Trajectory trajectory = paths.getDetectedPath();
+    Trajectory trajectory = paths.getGSAR();
 
     RamseteCommand ramseteCommand = new RamseteCommand(
         trajectory,

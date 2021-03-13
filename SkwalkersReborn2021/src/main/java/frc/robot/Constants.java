@@ -46,17 +46,17 @@ public final class Constants {
     }
 
     public static final class DriveConstants {
-        public static final int kLeftMasterPort = 1;
-        public static final int kLeftFollowerPort = 2;
-        public static final int kRightMasterPort = 3;
-        public static final int kRightFollowerPort = 4;
+        public static final int kLeftMasterPort = 3;
+        public static final int kLeftFollowerPort = 4;
+        public static final int kRightMasterPort = 1;
+        public static final int kRightFollowerPort = 2;
         
         public static final int PigeonIMUPort = 8;
 
-        public static final TalonFXInvertType kLeftInvertType = TalonFXInvertType.Clockwise;
-        public static final TalonFXInvertType kRightInvertType = TalonFXInvertType.CounterClockwise;
+        public static final TalonFXInvertType kLeftInvertType = TalonFXInvertType.CounterClockwise;
+        public static final TalonFXInvertType kRightInvertType = TalonFXInvertType.Clockwise;
 
-        public static final double kDriveSpeed = 0.0;
+        public static final double kDriveSpeed = 0.3;
 
         public static final double kTrackWidth = 0.5558; // meters->needs to be inputted
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidth);
@@ -69,7 +69,7 @@ public final class Constants {
         public static double ksVolts = 0.552;
 		public static double kvVoltSecondsPerMeter = 0.726;
 		public static double kaVoltSecondsSquaredPerMeter = 0.077;
-        public static double kPDriveVel = 2.18;
+        public static double kPDriveVel = 7;
 
         public static final double kvVoltSecondsPerRadian = 1.5;
         public static final double kaVoltSecondsSquaredPerRadian = 0.3;
