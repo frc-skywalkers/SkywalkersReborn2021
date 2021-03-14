@@ -29,7 +29,7 @@ public class DetectPath extends CommandBase {
   @Override
   public void execute() {
     Paths.pathIndex = table.getEntry("path").getDouble(-1);
-    System.out.println(Paths.pathIndex);
+    System.out.println("PATH RETURNED:::" + Paths.pathIndex);
   }
 
   // Called once the command ends or is interrupted.
@@ -39,8 +39,12 @@ public class DetectPath extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (Paths.pathIndex < 1) ? true: false;
+    if (Paths.pathIndex >= 1) {
+      System.out.println("PATH DETECTED == " + Paths.pathIndex);
+      return true;
+    } else {
+      System.out.println("NOT DETECTED YET");
+      return false;
+    }
   }
-
-
 }
