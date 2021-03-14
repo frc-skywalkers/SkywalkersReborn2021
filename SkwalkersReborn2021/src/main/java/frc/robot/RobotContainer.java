@@ -136,40 +136,26 @@ public class RobotContainer {
     // .alongWith(new RunCommand(intake::intake, intake))
     // .andThen(() -> drive.tankDriveVolts(0, 0));
 
-    // return ramseteInit()
-    // .alongWith(new RunCommand(intake::intake, intake))
-    // .andThen(() -> drive.tankDriveVolts(0, 0))
-    // .andThen(() -> intake.stopRoller());
+    Paths paths = new Paths();
+    Trajectory trajectory = paths.getSlalom();
 
-    // System.out.println("GETAUTONOMOUSCOMMAND CALLED");
-    // return new InstantCommand(() -> System.out.println("BEGIN COMMANDS"))
-    // .andThen(new MoveArmForTime(arm, ArmConstants.kLowerArmSpeed, 3))
-    // .andThen(() -> System.out.println("STARTED WAITING!!!"))
-    // .andThen(new WaitCommand(3))
-    // // .andThen(new DetectPath())
-    // .andThen(() -> System.out.println("STOPPED WAITING!!!"))
-    // .andThen(new ParallelCommandGroup(new RunCommand(() -> {
-    //   Paths paths = new Paths();
-    //   Trajectory trajectory = paths.getDetectedPath();
-    //   ramseteInit(trajectory);
-    // }), new RunCommand(intake::intake, intake)))
-    // .andThen(() -> drive.tankDriveVolts(0, 0))
-    // .andThen(intake::stopRoller);
+    return ramseteInit(trajectory)
+    .andThen(() -> drive.tankDriveVolts(0, 0));
     
-    return new SequentialCommandGroup(
-      new InstantCommand(() -> System.out.println("BEGIN COMMANDS")),
-      new MoveArmForTime(arm, ArmConstants.kLowerArmSpeed, 3),
-      new InstantCommand(() -> System.out.println("STARTED WAITING!!!")),
-      new WaitCommand(3),
-      new DetectPath(drive, intake)
-    );
+    //IMPORTANT
+    // return new SequentialCommandGroup(
+    //   new InstantCommand(() -> System.out.println("BEGIN COMMANDS")),
+    //   new MoveArmForTime(arm, ArmConstants.kLowerArmSpeed, 3),
+    //   new InstantCommand(() -> System.out.println("STARTED WAITING!!!")),
+    //   new WaitCommand(3),
+    //   new DetectPath(drive, intake)
+    // );
 
     
   }
 
   public Command ramseteInit(Trajectory traj) {
     System.out.println("RAMSETEINIT CALLED");
-    Paths paths = new Paths();
 
     RamseteCommand ramseteCommand = new RamseteCommand(
         traj,

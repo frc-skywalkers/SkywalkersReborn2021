@@ -78,7 +78,7 @@ public class Paths {
             DriverStation.reportError("Unable to open trajectory: " + abJSON, ex.getStackTrace());
         }
 
-        String slalomJSON = "paths/Slalomv2.wpilib.json";
+        String slalomJSON = "paths/Slalomv4.wpilib.json";
         slalom = new Trajectory();
         try {
             Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(slalomJSON);
