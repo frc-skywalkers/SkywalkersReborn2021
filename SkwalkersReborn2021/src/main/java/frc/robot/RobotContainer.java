@@ -45,8 +45,10 @@ import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -75,15 +77,14 @@ public class RobotContainer {
 
   private XboxController driveController = new XboxController(Constants.OIConstants.kDriverControllerPort);
 
-  private NetworkTableInstance inst = NetworkTableInstance.getDefault();
-  private NetworkTable table = inst.getTable("datatable");
-  private double pathIndex = table.getEntry("path").getDouble(-1);
+  // private NetworkTableInstance inst = NetworkTableInstance.getDefault();
+  // private NetworkTable table = inst.getTable("datatable");
+  // private double pathIndex = table.getEntry("path").getDouble(-1);
   
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
-    System.out.println("PATH INDEX::::::" + pathIndex);
 
     drive.setDefaultCommand(
         new RunCommand(
@@ -140,22 +141,38 @@ public class RobotContainer {
     // .andThen(() -> drive.tankDriveVolts(0, 0))
     // .andThen(() -> intake.stopRoller());
 
-    return new MoveArmForTime(arm, ArmConstants.kLowerArmSpeed, 3)
-    .andThen(new DetectPath())
-    .alongWith(new RunCommand(intake::intake, intake))
-    .andThen(ramseteInit())
-    .andThen(() -> drive.tankDriveVolts(0, 0));
+    // System.out.println("GETAUTONOMOUSCOMMAND CALLED");
+    // return new InstantCommand(() -> System.out.println("BEGIN COMMANDS"))
+    // .andThen(new MoveArmForTime(arm, ArmConstants.kLowerArmSpeed, 3))
+    // .andThen(() -> System.out.println("STARTED WAITING!!!"))
+    // .andThen(new WaitCommand(3))
+    // // .andThen(new DetectPath())
+    // .andThen(() -> System.out.println("STOPPED WAITING!!!"))
+    // .andThen(new ParallelCommandGroup(new RunCommand(() -> {
+    //   Paths paths = new Paths();
+    //   Trajectory trajectory = paths.getDetectedPath();
+    //   ramseteInit(trajectory);
+    // }), new RunCommand(intake::intake, intake)))
+    // .andThen(() -> drive.tankDriveVolts(0, 0))
+    // .andThen(intake::stopRoller);
+    
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> System.out.println("BEGIN COMMANDS")),
+      new MoveArmForTime(arm, ArmConstants.kLowerArmSpeed, 3),
+      new InstantCommand(() -> System.out.println("STARTED WAITING!!!")),
+      new WaitCommand(3),
+      new DetectPath(drive, intake)
+    );
 
     
   }
 
-  public Command ramseteInit() {
+  public Command ramseteInit(Trajectory traj) {
+    System.out.println("RAMSETEINIT CALLED");
     Paths paths = new Paths();
 
-    Trajectory trajectory = paths.getDetectedPath();
-
     RamseteCommand ramseteCommand = new RamseteCommand(
-        trajectory,
+        traj,
         drive::getPose,
         new RamseteController(
           AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
@@ -171,12 +188,10 @@ public class RobotContainer {
         drive
     );
 
-    drive.resetOdometry(trajectory.getInitialPose());
+    drive.resetOdometry(traj.getInitialPose());
 
     return ramseteCommand;
   }
 
-  public void setPath(double path) {
-    pathIndex = path;
-  }
+  
 }

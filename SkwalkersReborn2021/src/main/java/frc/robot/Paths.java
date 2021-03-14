@@ -69,7 +69,7 @@ public class Paths {
             DriverStation.reportError("Unable to open trajectory: " + arJSON, ex.getStackTrace());
         }
 
-        String abJSON = "paths/GSAB.wpilib.json";
+        String abJSON = "paths/GSABv2.wpilib.json";
         GSAB = new Trajectory();
         try {
             Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(abJSON);
@@ -111,6 +111,10 @@ public class Paths {
 
     public Trajectory getGSAR() {
         return GSAR;
+    }
+
+    public Trajectory getGSAB() {
+        return GSAB;
     }
 
     
