@@ -25,6 +25,10 @@ public class Arm extends SubsystemBase {
 
   }
 
+  public void stop() {
+    arm.set(0);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

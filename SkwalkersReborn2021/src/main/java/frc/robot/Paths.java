@@ -60,7 +60,7 @@ public class Paths {
         //         new Translation2d(6.95, 2.25)), 
         //     new Pose2d(8.75, 2.25, new Rotation2d(0)), config);
 
-        String arJSON = "paths/GSARv2.wpilib.json";
+        String arJSON = "paths/GSARv4.wpilib.json";
         GSAR = new Trajectory();
         try {
             Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(arJSON);
@@ -100,7 +100,7 @@ public class Paths {
             return GSAB;
         } else {
             System.out.println("TRAJECTORY NOT DETECTED!!!");
-            return GSAR;
+            return new Trajectory();
             
         }
     }

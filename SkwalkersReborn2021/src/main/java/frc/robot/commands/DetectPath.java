@@ -29,6 +29,7 @@ public class DetectPath extends CommandBase {
   @Override
   public void execute() {
     Paths.pathIndex = table.getEntry("path").getDouble(-1);
+    System.out.println(Paths.pathIndex);
   }
 
   // Called once the command ends or is interrupted.

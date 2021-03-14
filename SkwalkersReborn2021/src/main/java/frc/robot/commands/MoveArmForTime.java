@@ -13,15 +13,18 @@ public class MoveArmForTime extends CommandBase {
   /** Creates a new MoveArmForTime. */
 
   private Arm arm;
-  private boolean finished;
   private Timer timer;
   private double seconds;
+  private double speed;
+  private boolean finished = false;
 
-  public MoveArmForTime(Arm a, double secs) {
+  public MoveArmForTime(Arm a, double sp, double secs) {
     // Use addRequirements() here to declare subsystem dependencies.
     arm = a;
     addRequirements(arm);
     seconds = secs;
+    speed = sp;
+    timer = new Timer();
   }
 
   // Called when the command is initially scheduled.
@@ -29,22 +32,25 @@ public class MoveArmForTime extends CommandBase {
   public void initialize() {
     timer.reset();
     timer.start();
+    while (timer.get() < seconds) {
+      arm.moveArm(speed);
+    }
+    finished = true;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    arm.moveArm(Constants.ArmConstants.kLowerArmSpeed);
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    arm.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (timer.get() >= seconds) ? true: false;
+    return finished;
   }
 }
