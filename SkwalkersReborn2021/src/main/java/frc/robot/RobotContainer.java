@@ -4,38 +4,17 @@
 
 package frc.robot;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
-
-import javax.lang.model.util.ElementScanner6;
-
-import com.ctre.phoenix.sensors.PigeonIMU;
-
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.SlewRateLimiter;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryParameterizer.TrajectoryGenerationException;
-import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.DetectPath;
 import frc.robot.commands.MoveArmForTime;
@@ -43,14 +22,11 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -65,26 +41,17 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Arm arm = new Arm();
 
-  // private final String [] paths = {
-  //   "paths/GalacticSearchABlue.wpilib.json",
-  //   "paths/GalacticSearchARed.wpilib.json",
-  //   "paths/GalacticSearchBBlue.wpilib.json",
-  //   "paths/GalacticSearchBRed.wpilib.json",
-  //   "paths/Slalom.wpilib.json",
-  //   "paths/slalomV1.wpilib.json"
-  // };
-  // private final int pathToRun = 4;
+  private XboxController driveController = new XboxController(OIConstants.kDriverControllerPort);
 
-  private XboxController driveController = new XboxController(Constants.OIConstants.kDriverControllerPort);
+  private Paths paths = new Paths();
 
-  // private NetworkTableInstance inst = NetworkTableInstance.getDefault();
-  // private NetworkTable table = inst.getTable("datatable");
-  // private double pathIndex = table.getEntry("path").getDouble(-1);
+  private Command gsDetection, gsRedA, gsBlueA, gsRedB, gsBlueB, slalom, barrel, bounce;
+
+  private SendableChooser<Command> chooser = new SendableChooser<>();
   
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-
 
     drive.setDefaultCommand(
         new RunCommand(
@@ -94,7 +61,50 @@ public class RobotContainer {
                     driveController.getRawAxis(OIConstants.kRightX),
                     DriveConstants.kDriveSpeed),
             drive));
-      
+    
+    gsDetection =  new SequentialCommandGroup(
+        new InstantCommand(() -> System.out.println("BEGIN COMMANDS")),
+        new MoveArmForTime(arm, ArmConstants.kLowerArmSpeed, 3),
+        new InstantCommand(() -> System.out.println("STARTED WAITING!!!")),
+        new WaitCommand(3),
+        new DetectPath(drive, intake)
+      );
+
+    gsRedA = ramseteInit(paths.getGSAR())
+      .alongWith(new RunCommand(intake::intake, intake))
+      .andThen(() -> drive.tankDriveVolts(0, 0))
+      .andThen(intake::stopRoller, intake);
+
+    gsBlueA = ramseteInit(paths.getGSAB())
+      .alongWith(new RunCommand(intake::intake, intake))
+      .andThen(() -> drive.tankDriveVolts(0, 0))
+      .andThen(intake::stopRoller, intake);
+
+    gsRedB = ramseteInit(paths.getGSBR())
+      .alongWith(new RunCommand(intake::intake, intake))
+      .andThen(() -> drive.tankDriveVolts(0, 0))
+      .andThen(intake::stopRoller, intake);
+
+    gsBlueB = ramseteInit(paths.getGSBB())
+      .alongWith(new RunCommand(intake::intake, intake))
+      .andThen(() -> drive.tankDriveVolts(0, 0))
+      .andThen(intake::stopRoller, intake);
+
+    slalom = ramseteInit(paths.getSlalom()).andThen(() -> drive.tankDriveVolts(0, 0));
+    barrel = ramseteInit(paths.getBarrel()).andThen(() -> drive.tankDriveVolts(0, 0));
+    bounce = ramseteInit(paths.getBounce()).andThen(() -> drive.tankDriveVolts(0, 0));
+    
+    chooser.addOption("GS-Detection", gsDetection);
+    chooser.addOption("GS-RedA", gsRedA);
+    chooser.addOption("GS-BlueA", gsBlueA);
+    chooser.addOption("GS-RedB", gsRedB);
+    chooser.addOption("GS-BlueB", gsBlueB);
+    chooser.addOption("Slalom", slalom);
+    chooser.addOption("Barrel", barrel);
+    chooser.addOption("Bounce", bounce);
+
+    SmartDashboard.putData("Autonmous", chooser);
+    
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -108,17 +118,17 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     // Toggle Quick Turn when driver presses the Toggle Quick Turn button
-    new JoystickButton(driveController, Constants.OIConstants.kToggleQuickTurnButton.value).whenPressed(drive::toggleQuickTurn);
+    new JoystickButton(driveController, OIConstants.kToggleQuickTurnButton.value).whenPressed(drive::toggleQuickTurn);
 
-    new JoystickButton(driveController, Constants.OIConstants.kIntakeButton.value).whenPressed(intake::intake);
+    new JoystickButton(driveController, OIConstants.kIntakeButton.value).whenPressed(intake::intake);
 
-    new JoystickButton(driveController, Constants.OIConstants.kStopRollerButton.value).whenPressed(intake::stopRoller);
+    new JoystickButton(driveController, OIConstants.kStopRollerButton.value).whenPressed(intake::stopRoller);
 
-    new JoystickButton(driveController, Constants.OIConstants.kOuttakeButton.value).whenPressed(intake::outtake);
+    new JoystickButton(driveController, OIConstants.kOuttakeButton.value).whenPressed(intake::outtake);
 
-    new JoystickButton(driveController, Constants.OIConstants.kLiftArmButton.value).whileHeld(() -> arm.moveArm(Constants.ArmConstants.kLiftArmSpeed));
+    new JoystickButton(driveController, OIConstants.kLiftArmButton.value).whileHeld(() -> arm.moveArm(ArmConstants.kLiftArmSpeed));
 
-    new JoystickButton(driveController, Constants.OIConstants.kLowerArmButton.value).whileHeld(() -> arm.moveArm(Constants.ArmConstants.kLowerArmSpeed));
+    new JoystickButton(driveController, OIConstants.kLowerArmButton.value).whileHeld(() -> arm.moveArm(ArmConstants.kLowerArmSpeed));
 
   
   }
@@ -129,29 +139,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    
-
-    // Run path following command, then stop at the end.
-    // return ramseteCommand
-    // .alongWith(new RunCommand(intake::intake, intake))
-    // .andThen(() -> drive.tankDriveVolts(0, 0));
-
-    Paths paths = new Paths();
-    Trajectory trajectory = paths.getSlalom();
-
-    return ramseteInit(trajectory)
-    .andThen(() -> drive.tankDriveVolts(0, 0));
-    
-    //IMPORTANT
-    // return new SequentialCommandGroup(
-    //   new InstantCommand(() -> System.out.println("BEGIN COMMANDS")),
-    //   new MoveArmForTime(arm, ArmConstants.kLowerArmSpeed, 3),
-    //   new InstantCommand(() -> System.out.println("STARTED WAITING!!!")),
-    //   new WaitCommand(3),
-    //   new DetectPath(drive, intake)
-    // );
-
-    
+   
+    return chooser.getSelected();
   }
 
   public Command ramseteInit(Trajectory traj) {
