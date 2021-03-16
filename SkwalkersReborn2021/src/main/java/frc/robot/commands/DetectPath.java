@@ -37,6 +37,7 @@ public class DetectPath extends CommandBase {
     drive = dt;
     intake = in;
     addRequirements(drive);
+    addRequirements(intake);
 
     // Use addRequirements() here to declare subsystem dependencies.
   }
