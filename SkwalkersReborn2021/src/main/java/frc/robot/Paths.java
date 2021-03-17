@@ -25,16 +25,12 @@ public class Paths {
 
         GSAR = jsonToPath("paths/GSARv4.wpilib.json");
         GSAB = jsonToPath("paths/GSABv2.wpilib.json");
-
-        //JSON STRINGS TO BE UPDATED!!!
-        GSBB = jsonToPath("json");
-        GSBR = jsonToPath("json");
+        GSBB = jsonToPath("paths/GSBBv1.wpilib.json");
+        GSBR = jsonToPath("/paths/GSBRv1.wpilib.json");
 
         slalom = jsonToPath("paths/Slalomv4.wpilib.json");
-
-        //JSON STRINGS TO BE UPDATED!!!
-        barrel = jsonToPath("json");
-        bounce = jsonToPath("json");
+        barrel = jsonToPath("paths/BarrelRacingv1.wpilib.json");
+        bounce = jsonToPath("paths/Bouncev1.wpilib.json");
 
     }
 
