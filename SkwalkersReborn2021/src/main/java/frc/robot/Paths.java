@@ -26,7 +26,7 @@ public class Paths {
         GSAR = jsonToPath("paths/GSARv4.wpilib.json");
         GSAB = jsonToPath("paths/GSABv2.wpilib.json");
         GSBB = jsonToPath("paths/GSBBv1.wpilib.json");
-        GSBR = jsonToPath("/paths/GSBRv1.wpilib.json");
+        GSBR = jsonToPath("paths/GSBRv1.wpilib.json");
 
         slalom = jsonToPath("paths/Slalomv4.wpilib.json");
         barrel = jsonToPath("paths/BarrelRacingv1.wpilib.json");
