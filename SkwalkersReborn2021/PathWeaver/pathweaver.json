@@ -3,7 +3,7 @@
   "exportUnit": "Always Meters",
   "maxVelocity": 0.5,
   "maxAcceleration": 0.5,
-  "wheelBase": 0.5558,
-  "gameName": "Slalom Path",
+  "wheelBase": 0.65704,
+  "gameName": "Bounce Path",
   "outputDir": ".."
 }

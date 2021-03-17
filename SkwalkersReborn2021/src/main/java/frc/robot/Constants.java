@@ -58,7 +58,7 @@ public final class Constants {
 
         public static final double kDriveSpeed = 0.3;
 
-        public static final double kTrackWidth = 0.5558; // meters->needs to be inputted
+        public static final double kTrackWidth = 0.65704; // meters->needs to be inputted
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidth);
         
         public static final double kWheelRadius = Units.inchesToMeters(3); // meters->needs to be inputted
