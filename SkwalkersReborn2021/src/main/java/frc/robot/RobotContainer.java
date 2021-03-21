@@ -6,24 +6,19 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.controller.RamseteController;
-import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.DetectPath;
 import frc.robot.commands.MoveArmForTime;
+import frc.robot.commands.FollowPath;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -45,9 +40,7 @@ public class RobotContainer {
 
   private Paths paths = new Paths();
 
-  private Command gsDetection, gsRedA, gsBlueA, gsRedB, gsBlueB, slalom, barrel, bounce;
-
-  private SendableChooser<Command> chooser = new SendableChooser<>();
+  private SendableChooser<Integer> chooser = new SendableChooser<>();
   
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -62,51 +55,36 @@ public class RobotContainer {
                     DriveConstants.kDriveSpeed),
             drive));
     
-    gsDetection =  new SequentialCommandGroup(
-        new InstantCommand(() -> System.out.println("BEGIN COMMANDS")),
-        new MoveArmForTime(arm, ArmConstants.kLowerArmSpeed, 3),
-        new InstantCommand(() -> System.out.println("STARTED WAITING!!!")),
-        new WaitCommand(3),
-        new DetectPath(drive, intake)
-      );
 
-    gsRedA = ramseteInit(paths.getGSAR())
-      .alongWith(new RunCommand(intake::intake, intake))
-      .andThen(() -> drive.tankDriveVolts(0, 0))
-      .andThen(intake::stopRoller, intake);
+    chooser.addOption("GS-Detection", 8);
+    chooser.addOption("GS-RedA", 1);
+    chooser.addOption("GS-BlueA", 2);
+    chooser.addOption("GS-RedB", 3);
+    chooser.addOption("GS-BlueB", 4);
+    chooser.addOption("Slalom", 5);
+    chooser.addOption("Barrel", 6);
+    chooser.addOption("Bounce", 7);
 
-    gsBlueA = ramseteInit(paths.getGSAB())
-      .alongWith(new RunCommand(intake::intake, intake))
-      .andThen(() -> drive.tankDriveVolts(0, 0))
-      .andThen(intake::stopRoller, intake);
-
-    gsRedB = ramseteInit(paths.getGSBR())
-      .alongWith(new RunCommand(intake::intake, intake))
-      .andThen(() -> drive.tankDriveVolts(0, 0))
-      .andThen(intake::stopRoller, intake);
-
-    gsBlueB = ramseteInit(paths.getGSBB())
-      .alongWith(new RunCommand(intake::intake, intake))
-      .andThen(() -> drive.tankDriveVolts(0, 0))
-      .andThen(intake::stopRoller, intake);
-
-    slalom = ramseteInit(paths.getSlalom()).andThen(() -> drive.tankDriveVolts(0, 0));
-    barrel = ramseteInit(paths.getBarrel()).andThen(() -> drive.tankDriveVolts(0, 0));
-    bounce = ramseteInit(paths.getBounce()).andThen(() -> drive.tankDriveVolts(0, 0));
-    
-    chooser.addOption("GS-Detection", gsDetection);
-    chooser.addOption("GS-RedA", gsRedA);
-    chooser.addOption("GS-BlueA", gsBlueA);
-    chooser.addOption("GS-RedB", gsRedB);
-    chooser.addOption("GS-BlueB", gsBlueB);
-    chooser.addOption("Slalom", slalom);
-    chooser.addOption("Barrel", barrel);
-    chooser.addOption("Bounce", bounce);
 
     SmartDashboard.putData("Autonmous", chooser);
     
     // Configure the button bindings
     configureButtonBindings();
+  }
+
+  public Intake getIntake()
+  {
+    return intake;
+  }
+
+  public Drivetrain getDriveTrain()
+  {
+    return drive;
+  }
+
+  public Paths getPaths()
+  {
+    return paths;
   }
 
   /**
@@ -139,34 +117,28 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-   
-    return chooser.getSelected();
-  }
-
-  public Command ramseteInit(Trajectory traj) {
-    System.out.println("RAMSETEINIT CALLED");
-
-    RamseteCommand ramseteCommand = new RamseteCommand(
-        traj,
-        drive::getPose,
-        new RamseteController(
-          AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
-        new SimpleMotorFeedforward(
-          DriveConstants.ksVolts, 
-          DriveConstants.kvVoltSecondsPerMeter, 
-          DriveConstants.kaVoltSecondsSquaredPerMeter),
-        DriveConstants.kDriveKinematics,
-        drive::getWheelSpeeds,
-        new PIDController(DriveConstants.kPDriveVel, 0, 0),
-        new PIDController(DriveConstants.kPDriveVel, 0, 0),
-        drive::tankDriveVolts,
-        drive
-    );
-
-    drive.resetOdometry(traj.getInitialPose());
-
-    return ramseteCommand;
-  }
-
-  
+    Integer selected = chooser.getSelected();
+    //MyRamSete mrs = new MyRamSete(drive);
+    selected = 4;
+    if (selected == 8) {
+      return new SequentialCommandGroup(
+                new PrintCommand("START OF SEQUENTIAL COMMANDS"),
+                new MoveArmForTime(arm, ArmConstants.kLowerArmSpeed, 3),
+                new PrintCommand("START OF WAIT"),
+                new WaitCommand(3),
+                new PrintCommand("DETECT PATH"),
+                new DetectPath(this),
+                new PrintCommand("DETECTION DONE"),
+                new FollowPath(this)
+              );
+    } else {
+      // return mrs.getRamSeteCommand(paths.getPathByIndex(selected))
+      //   .alongWith(new RunCommand(intake::intake, intake))
+      //   .andThen(() -> drive.tankDriveVolts(0, 0))
+      //   .andThen(intake::stopRoller, intake);
+      
+      paths.pathIndex = selected;
+      return new FollowPath(this);
+    }
+  } 
 }

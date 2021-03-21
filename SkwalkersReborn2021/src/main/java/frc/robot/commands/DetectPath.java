@@ -9,22 +9,12 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 import frc.robot.Paths;
+import frc.robot.RobotContainer;
 
-import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.controller.RamseteController;
-import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.DetectPath;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+
 
 public class DetectPath extends CommandBase {
   /** Creates a new Detectpath. */
@@ -32,10 +22,14 @@ public class DetectPath extends CommandBase {
   private NetworkTable table = inst.getTable("datatable");
   private Drivetrain drive;
   private Intake intake;
+  private double pathIndex = -1;
+  Paths paths;
+
   
-  public DetectPath(Drivetrain dt, Intake in) {
-    drive = dt;
-    intake = in;
+  public DetectPath(RobotContainer rc) {
+    drive = rc.getDriveTrain();
+    intake = rc.getIntake();
+    paths = rc.getPaths();
     addRequirements(drive);
     addRequirements(intake);
 
@@ -49,57 +43,26 @@ public class DetectPath extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Paths.pathIndex = table.getEntry("path").getDouble(-1);
-    System.out.println("PATH RETURNED:::" + Paths.pathIndex);
+    pathIndex = table.getEntry("path").getDouble(-1);
+    System.out.println("PATH RETURNED:::" + pathIndex);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    new SequentialCommandGroup(
-      new ParallelCommandGroup(ramseteInit(), new RunCommand(intake::intake, intake)),
-      new InstantCommand(() -> drive.tankDriveVolts(0, 0)),
-      new InstantCommand(intake::stopRoller)
-    ).schedule();
-    
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (Paths.pathIndex >= 1.0) {
-      System.out.println("PATH DETECTED == " + Paths.pathIndex);
+    if (pathIndex >= 1.0) {
+      System.out.println("PATH DETECTED == " + pathIndex);
+      // Update the pathIndex in the paths
+      paths.pathIndex = pathIndex;
       return true;
     } else {
       System.out.println("NOT DETECTED YET");
       return false;
     }
-  }
-
-  public Command ramseteInit( ) {
-    System.out.println("RAMSETEINIT CALLED");
-    Paths paths = new Paths();
-    Trajectory trajectory = paths.getDetectedPath();
-
-    RamseteCommand ramseteCommand = new RamseteCommand(
-        trajectory,
-        drive::getPose,
-        new RamseteController(
-          AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
-        new SimpleMotorFeedforward(
-          DriveConstants.ksVolts, 
-          DriveConstants.kvVoltSecondsPerMeter, 
-          DriveConstants.kaVoltSecondsSquaredPerMeter),
-        DriveConstants.kDriveKinematics,
-        drive::getWheelSpeeds,
-        new PIDController(DriveConstants.kPDriveVel, 0, 0),
-        new PIDController(DriveConstants.kPDriveVel, 0, 0),
-        drive::tankDriveVolts,
-        drive
-    );
-
-    drive.resetOdometry(trajectory.getInitialPose());
-
-    return ramseteCommand;
   }
 }

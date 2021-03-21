@@ -19,7 +19,7 @@ public class Paths {
     private Trajectory barrel;
     private Trajectory bounce;
 
-    public static double pathIndex = -1;
+    public double pathIndex = -1;
 
     public Paths() {
 
@@ -44,47 +44,32 @@ public class Paths {
         }
     }
 
-    public Trajectory getDetectedPath() {
-        if (pathIndex == 1.0) {
-            System.out.println("RED A---------------");
-            return GSAR;
-        } else if (pathIndex == 2.0) {
-            System.out.println("Blue A-------------");
-            return GSAB;
-        } else {
-            System.out.println("TRAJECTORY NOT DETECTED!!!");
-            return new Trajectory();
+    // public Trajectory getDetectedPath() {
+    //     if (pathIndex == 1.0) {
+    //         System.out.println("RED A---------------");
+    //         return GSAR;
+    //     } else if (pathIndex == 2.0) {
+    //         System.out.println("Blue A-------------");
+    //         return GSAB;
+    //     } else {
+    //         System.out.println("TRAJECTORY NOT DETECTED!!!");
+    //         return new Trajectory();
             
+    //     }
+    // }
+
+    public Trajectory getPathByIndex(double pIndex) {
+        int index = (int)pIndex;
+        switch (index) {
+            case 1: return GSAR;
+            case 2: return GSAB;
+            case 3: return GSBR;
+            case 4: return GSBB;
+            case 5: return slalom;
+            case 6: return barrel;
+            case 7: return bounce;
+            default:  return null; 
         }
     }
-
-    public Trajectory getGSAR() {
-        return GSAR;
-    }
-    
-    public Trajectory getGSAB() {
-        return GSAB;
-    }
-
-    public Trajectory getGSBR() {
-        return GSBR;
-    }
-
-    public Trajectory getGSBB() {
-        return GSBB;
-    }
-
-    public Trajectory getSlalom() {
-        return slalom;
-    }
-
-    public Trajectory getBarrel() {
-        return barrel;
-    }
-
-    public Trajectory getBounce() {
-        return bounce;
-    }
-
     
 }
