@@ -30,6 +30,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.Drivetrain;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpiutil.math.Pair;
 
 public class FollowPath extends CommandBase {
   
@@ -61,17 +62,32 @@ public class FollowPath extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if (interrupted)
+    if (interrupted){
       return;
-    Trajectory traj = paths.getPathByIndex(paths.pathIndex);
+    }
+    //Trajectory traj = paths.getPathByIndex(paths.pathIndex);
+    Pair<Trajectory, Boolean> pair = paths.getPathByIndex(paths.pathIndex);
+    Trajectory traj = pair.getFirst();
+    Boolean startRoller = pair.getSecond();
+
     if (traj == null) {
       return;
     }
-    new SequentialCommandGroup(
-      new ParallelCommandGroup(getRamSeteCommand(traj), new RunCommand(intake::intake, intake)),
-      new InstantCommand(() -> drive.tankDriveVolts(0, 0)),
-      new InstantCommand(intake::stopRoller)
-    ).schedule();
+
+    if (startRoller){ //GALACTIC SEARCH
+      new SequentialCommandGroup(
+        new ParallelCommandGroup(getRamSeteCommand(traj), new RunCommand(intake::intake, intake)),
+        new InstantCommand(() -> drive.tankDriveVolts(0, 0)),
+        new InstantCommand(intake::stopRoller)
+      ).schedule();
+    }
+    else{ //AUTONAV
+      new SequentialCommandGroup(
+        getRamSeteCommand(traj),
+        new InstantCommand(() -> drive.tankDriveVolts(0, 0)),
+        new InstantCommand(intake::stopRoller)
+      ).schedule();
+    }
   }
 
   private Command getRamSeteCommand(Trajectory traj) {

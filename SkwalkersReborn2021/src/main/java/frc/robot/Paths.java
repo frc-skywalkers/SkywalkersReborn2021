@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpiutil.math.Pair;
 
 public class Paths {
     
@@ -20,6 +21,16 @@ public class Paths {
     private Trajectory bounce;
 
     public double pathIndex = -1;
+    public class PathMapper{
+        static final int DETECTION = 8;
+        static final int GSAR = 1;
+        static final int GSAB = 2;
+        static final int GSBR = 3;
+        static final int GSBB = 4;
+        static final int SLALOM = 5;
+        static final int BARREL = 6;
+        static final int BOUNCE = 7;
+    }
 
     public Paths() {
 
@@ -57,19 +68,35 @@ public class Paths {
             
     //     }
     // }
-
-    public Trajectory getPathByIndex(double pIndex) {
+    public Pair<Trajectory, Boolean> getPathByIndex(double pIndex) {
         int index = (int)pIndex;
+        
         switch (index) {
-            case 1: return GSAR;
-            case 2: return GSAB;
-            case 3: return GSBR;
-            case 4: return GSBB;
-            case 5: return slalom;
-            case 6: return barrel;
-            case 7: return bounce;
+            case PathMapper.GSAR: return new Pair<>(GSAR, true);
+            case PathMapper.GSAB: return new Pair<>(GSAB, true);
+            case PathMapper.GSBR: return new Pair<>(GSBR, true);
+            case PathMapper.GSBB: return new Pair<>(GSBB, true);
+            case PathMapper.SLALOM: return new Pair<>(slalom, false);
+            case PathMapper.BARREL: return new Pair<>(barrel, false);
+            case PathMapper.BOUNCE: return new Pair<>(bounce, false);
             default:  return null; 
         }
     }
+    
+//  PREVIOUS CODE:
+    // public Trajectory getPathByIndex(double pIndex) {
+    //     int index = (int)pIndex;
+        
+    //     switch (index) {
+    //         case 1: return GSAR;
+    //         case 2: return GSAB;
+    //         case 3: return GSBR;
+    //         case 4: return GSBB;
+    //         case 5: return slalom;
+    //         case 6: return barrel;
+    //         case 7: return bounce;
+    //         default:  return null; 
+    //     }
+    // }
     
 }

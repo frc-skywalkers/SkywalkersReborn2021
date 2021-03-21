@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Paths.PathMapper;
 import frc.robot.commands.DetectPath;
 import frc.robot.commands.MoveArmForTime;
 import frc.robot.commands.FollowPath;
@@ -23,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpiutil.math.Pair;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -56,14 +58,14 @@ public class RobotContainer {
             drive));
     
 
-    chooser.addOption("GS-Detection", 8);
-    chooser.addOption("GS-RedA", 1);
-    chooser.addOption("GS-BlueA", 2);
-    chooser.addOption("GS-RedB", 3);
-    chooser.addOption("GS-BlueB", 4);
-    chooser.addOption("Slalom", 5);
-    chooser.addOption("Barrel", 6);
-    chooser.addOption("Bounce", 7);
+    chooser.addOption("GS-Detection", PathMapper.DETECTION);
+    chooser.addOption("GS-RedA", PathMapper.GSAR);
+    chooser.addOption("GS-BlueA", PathMapper.GSAB);
+    chooser.addOption("GS-RedB", PathMapper.GSBR);
+    chooser.addOption("GS-BlueB", PathMapper.GSBB);
+    chooser.addOption("Slalom", PathMapper.SLALOM);
+    chooser.addOption("Barrel", PathMapper.BARREL);
+    chooser.addOption("Bounce", PathMapper.BOUNCE);
 
 
     SmartDashboard.putData("Autonmous", chooser);
@@ -119,8 +121,8 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     Integer selected = chooser.getSelected();
     //MyRamSete mrs = new MyRamSete(drive);
-    selected = 4;
-    if (selected == 8) {
+    //selected = PathMapper.BARREL; //CAN BE COMMENTED OUT (HARDCODED)
+    if (selected == PathMapper.DETECTION) {
       return new SequentialCommandGroup(
                 new PrintCommand("START OF SEQUENTIAL COMMANDS"),
                 new MoveArmForTime(arm, ArmConstants.kLowerArmSpeed, 3),
@@ -136,7 +138,6 @@ public class RobotContainer {
       //   .alongWith(new RunCommand(intake::intake, intake))
       //   .andThen(() -> drive.tankDriveVolts(0, 0))
       //   .andThen(intake::stopRoller, intake);
-      
       paths.pathIndex = selected;
       return new FollowPath(this);
     }
