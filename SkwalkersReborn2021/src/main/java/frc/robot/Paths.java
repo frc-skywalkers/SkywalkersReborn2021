@@ -12,13 +12,31 @@ import edu.wpi.first.wpiutil.math.Pair;
 public class Paths {
     
     private Trajectory GSAB;
+    private Trajectory[] GSAB_list = {GSAB};
+
     private Trajectory GSAR;
+    private Trajectory[] GSAR_list = {GSAR};
+
     private Trajectory GSBR;
+    private Trajectory[] GSBR_list = {GSBR};
+
     private Trajectory GSBB;
+    private Trajectory[] GSBB_list = {GSBB};
 
     private Trajectory slalom;
+    private Trajectory[] slalom_list = {slalom};
     private Trajectory barrel;
-    private Trajectory bounce;
+    private Trajectory[] barrel_list = {barrel};
+
+    // private Trajectory bounce;
+
+    private Trajectory bounceP1;
+    private Trajectory bounceP2;
+    private Trajectory bounceP3;
+    private Trajectory bounceP4;
+
+    private Trajectory[] bounce_list = new Trajectory[4];
+    
 
     public double pathIndex = -1;
     public class PathMapper{
@@ -41,7 +59,16 @@ public class Paths {
 
         slalom = jsonToPath("paths/Slalomv4.wpilib.json");
         barrel = jsonToPath("paths/BarrelRacingv1.wpilib.json");
-        bounce = jsonToPath("paths/Bouncev1.wpilib.json");
+        // bounce = jsonToPath("paths/Bouncev1.wpilib.json");
+        bounceP1 = jsonToPath("paths/BounceP1.wpilib.json");
+        bounceP2 = jsonToPath("paths/BounceP2.wpilib.json");
+        bounceP3 = jsonToPath("paths/BounceP3.wpilib.json");
+        bounceP4 = jsonToPath("paths/BounceP4.wpilib.json");
+        bounce_list[0] = bounceP1;
+        bounce_list[1] = bounceP2;
+        bounce_list[2] = bounceP3;
+        bounce_list[3] = bounceP4;
+                
 
     }
 
@@ -68,17 +95,17 @@ public class Paths {
             
     //     }
     // }
-    public Pair<Trajectory, Boolean> getPathByIndex(double pIndex) {
+    public Pair<Trajectory[], Boolean> getPathByIndex(double pIndex) {
         int index = (int)pIndex;
         
         switch (index) {
-            case PathMapper.GSAR: return new Pair<>(GSAR, true);
-            case PathMapper.GSAB: return new Pair<>(GSAB, true);
-            case PathMapper.GSBR: return new Pair<>(GSBR, true);
-            case PathMapper.GSBB: return new Pair<>(GSBB, true);
-            case PathMapper.SLALOM: return new Pair<>(slalom, false);
-            case PathMapper.BARREL: return new Pair<>(barrel, false);
-            case PathMapper.BOUNCE: return new Pair<>(bounce, false);
+            case PathMapper.GSAR: return new Pair<Trajectory[], Boolean>(GSAR_list, true);
+            case PathMapper.GSAB: return new Pair<>(GSAB_list, true);
+            case PathMapper.GSBR: return new Pair<>(GSBR_list, true);
+            case PathMapper.GSBB: return new Pair<>(GSBB_list, true);
+            case PathMapper.SLALOM: return new Pair<>(slalom_list, false);
+            case PathMapper.BARREL: return new Pair<>(barrel_list, false);
+            case PathMapper.BOUNCE: return new Pair<>(bounce_list, false);
             default:  return null; 
         }
     }

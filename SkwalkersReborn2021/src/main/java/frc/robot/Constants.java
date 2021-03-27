@@ -86,13 +86,13 @@ public final class Constants {
         public static final boolean kRollerInvert = false;
 
         public static final double kIntakeSpeed = -0.4;
-        public static final double kOuttakeSpeed = 0.4;
+        public static final double kOuttakeSpeed = 0.5;
     }
 
     public static final class ArmConstants {
         public static final int kArmPort = 5;
         public static final boolean kArmInvert = true;
-        public static final double kLiftArmSpeed = 0.1;
+        public static final double kLiftArmSpeed = 0.15;
         public static final double kLowerArmSpeed = -0.05;
 
     }

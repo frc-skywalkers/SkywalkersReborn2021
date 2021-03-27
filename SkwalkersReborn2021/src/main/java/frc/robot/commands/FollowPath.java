@@ -66,8 +66,8 @@ public class FollowPath extends CommandBase {
       return;
     }
     //Trajectory traj = paths.getPathByIndex(paths.pathIndex);
-    Pair<Trajectory, Boolean> pair = paths.getPathByIndex(paths.pathIndex);
-    Trajectory traj = pair.getFirst();
+    Pair<Trajectory[], Boolean> pair = paths.getPathByIndex(paths.pathIndex);
+    Trajectory[] traj = pair.getFirst();
     Boolean startRoller = pair.getSecond();
 
     if (traj == null) {
@@ -75,22 +75,38 @@ public class FollowPath extends CommandBase {
     }
 
     if (startRoller){ //GALACTIC SEARCH
-      new SequentialCommandGroup(
-        new ParallelCommandGroup(getRamSeteCommand(traj), new RunCommand(intake::intake, intake)),
-        new InstantCommand(() -> drive.tankDriveVolts(0, 0)),
-        new InstantCommand(intake::stopRoller)
-      ).schedule();
+      // new SequentialCommandGroup(
+      //   new ParallelCommandGroup(getRamSeteCommand(traj), new RunCommand(intake::intake, intake)),
+      //   new InstantCommand(() -> drive.tankDriveVolts(0, 0)),
+      //   new InstantCommand(intake::stopRoller)
+      // ).schedule();
+      SequentialCommandGroup galacticSearch =  new SequentialCommandGroup();
+      for (int i = 0; i < traj.length; i++) {
+        galacticSearch.addCommands(new ParallelCommandGroup(getRamSeteCommand(traj[i], i), new RunCommand(intake::intake, intake)));
+      }
+      galacticSearch.addCommands(new InstantCommand(() -> drive.tankDriveVolts(0, 0)), new InstantCommand(intake::stopRoller));
+      galacticSearch.schedule();
     }
     else{ //AUTONAV
-      new SequentialCommandGroup(
-        getRamSeteCommand(traj),
-        new InstantCommand(() -> drive.tankDriveVolts(0, 0)),
-        new InstantCommand(intake::stopRoller)
-      ).schedule();
+      // new SequentialCommandGroup(
+      //   getRamSeteCommand(traj),
+      //   new InstantCommand(() -> drive.tankDriveVolts(0, 0)),
+      //   new InstantCommand(intake::stopRoller)
+      // ).schedule();
+      SequentialCommandGroup autoNav = new SequentialCommandGroup();
+      for (int i = 0; i < traj.length; i++) {
+        System.out.println("Arrry Length: " + traj.length);
+        System.out.println("INDEX: " + i);
+        System.out.println("Traj: " + traj[i]);
+        autoNav.addCommands(getRamSeteCommand(traj[i], i));
+      }
+      autoNav.addCommands(new InstantCommand(() -> drive.tankDriveVolts(0, 0)));
+      autoNav.schedule();
+
     }
   }
 
-  private Command getRamSeteCommand(Trajectory traj) {
+  private Command getRamSeteCommand(Trajectory traj, int pathNumber) {
 
     RamseteCommand ramseteCommand = new RamseteCommand(
         traj,
@@ -108,7 +124,9 @@ public class FollowPath extends CommandBase {
         drive::tankDriveVolts,
         drive
     );
-    drive.resetOdometry(traj.getInitialPose());
+    if (pathNumber == 0) {
+      drive.resetOdometry(traj.getInitialPose());
+    } 
     return ramseteCommand;
 }
   // Returns true when the command should end.
