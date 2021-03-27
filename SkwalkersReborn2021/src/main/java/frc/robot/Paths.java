@@ -12,21 +12,21 @@ import edu.wpi.first.wpiutil.math.Pair;
 public class Paths {
     
     private Trajectory GSAB;
-    private Trajectory[] GSAB_list = {GSAB};
+    
 
     private Trajectory GSAR;
-    private Trajectory[] GSAR_list = {GSAR};
+   
 
     private Trajectory GSBR;
-    private Trajectory[] GSBR_list = {GSBR};
+    
 
     private Trajectory GSBB;
-    private Trajectory[] GSBB_list = {GSBB};
+    
 
     private Trajectory slalom;
-    private Trajectory[] slalom_list = {slalom};
+    
     private Trajectory barrel;
-    private Trajectory[] barrel_list = {barrel};
+    
 
     // private Trajectory bounce;
 
@@ -36,6 +36,12 @@ public class Paths {
     private Trajectory bounceP4;
 
     private Trajectory[] bounce_list = new Trajectory[4];
+    private Trajectory[] GSAB_list = {GSAB};
+    private Trajectory[] GSAR_list = {GSAR};
+    private Trajectory[] GSBR_list = {GSBR};
+    private Trajectory[] GSBB_list = {GSBB};
+    private Trajectory[] slalom_list = {slalom};
+    private Trajectory[] barrel_list = {barrel};
     
 
     public double pathIndex = -1;
