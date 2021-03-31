@@ -48,7 +48,7 @@ public class Paths {
             10);
         
         var autoCentripetalAccelerationConstraint = 
-        new CentripetalAccelerationConstraint(0.1);
+        new CentripetalAccelerationConstraint(AutoConstants.kMaxCentripetalAcceleration);
 
         // Create config for trajectory
         TrajectoryConfig config =

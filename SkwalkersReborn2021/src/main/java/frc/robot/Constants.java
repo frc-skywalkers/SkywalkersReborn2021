@@ -42,6 +42,7 @@ public final class Constants {
 		public static double kMaxAccelerationMetersPerSecondSquared = 0.5;
 		public static double kRamseteB = 2;
 		public static double kRamseteZeta = 0.7;
+		public static double kMaxCentripetalAcceleration = 0.1;
 
     }
 
