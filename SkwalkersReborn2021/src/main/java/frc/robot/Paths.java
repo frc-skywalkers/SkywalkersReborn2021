@@ -6,42 +6,24 @@ import java.nio.file.Path;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpilibj.trajectory.constraint.CentripetalAccelerationConstraint;
+import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpiutil.math.Pair;
+import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.DriveConstants;
 
 public class Paths {
-    
-    private Trajectory GSAB;
-    
 
-    private Trajectory GSAR;
-   
-
-    private Trajectory GSBR;
-    
-
-    private Trajectory GSBB;
-    
-
-    private Trajectory slalom;
-    
-    private Trajectory barrel;
-    
-
-    // private Trajectory bounce;
-
-    private Trajectory bounceP1;
-    private Trajectory bounceP2;
-    private Trajectory bounceP3;
-    private Trajectory bounceP4;
-
-    private Trajectory[] bounce_list = new Trajectory[4];
-    private Trajectory[] GSAB_list = {GSAB};
-    private Trajectory[] GSAR_list = {GSAR};
-    private Trajectory[] GSBR_list = {GSBR};
-    private Trajectory[] GSBB_list = {GSBB};
-    private Trajectory[] slalom_list = {slalom};
-    private Trajectory[] barrel_list = {barrel};
+    private Trajectory[] bounce;
+    private Trajectory[] GSAB;
+    private Trajectory[] GSAR;
+    private Trajectory[] GSBR;
+    private Trajectory[] GSBB;
+    private Trajectory[] slalom;
+    private Trajectory[] barrel;
     
 
     public double pathIndex = -1;
@@ -57,23 +39,40 @@ public class Paths {
     }
 
     public Paths() {
+        var autoVoltageConstraint =
+        new DifferentialDriveVoltageConstraint(
+            new SimpleMotorFeedforward(DriveConstants.ksVolts,
+                                       DriveConstants.kvVoltSecondsPerMeter,
+                                       DriveConstants.kaVoltSecondsSquaredPerMeter),
+            DriveConstants.kDriveKinematics,
+            10);
+        
+        var autoCentripetalAccelerationConstraint = 
+        new CentripetalAccelerationConstraint(0.1);
 
-        GSAR = jsonToPath("paths/GSARv4.wpilib.json");
-        GSAB = jsonToPath("paths/GSABv2.wpilib.json");
-        GSBB = jsonToPath("paths/GSBBv1.wpilib.json");
-        GSBR = jsonToPath("paths/GSBRv1.wpilib.json");
+        // Create config for trajectory
+        TrajectoryConfig config =
+            new TrajectoryConfig(AutoConstants.kMaxSpeedMetersPerSecond,
+                                AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+                // Add kinematics to ensure max speed is actually obeyed
+                .setKinematics(DriveConstants.kDriveKinematics)
+                // Apply the voltage constraint
+                .addConstraint(autoVoltageConstraint)
+                .addConstraint(autoCentripetalAccelerationConstraint);
 
-        slalom = jsonToPath("paths/Slalomv4.wpilib.json");
-        barrel = jsonToPath("paths/BarrelRacingv1.wpilib.json");
-        // bounce = jsonToPath("paths/Bouncev1.wpilib.json");
-        bounceP1 = jsonToPath("paths/BounceP1.wpilib.json");
-        bounceP2 = jsonToPath("paths/BounceP2.wpilib.json");
-        bounceP3 = jsonToPath("paths/BounceP3.wpilib.json");
-        bounceP4 = jsonToPath("paths/BounceP4.wpilib.json");
-        bounce_list[0] = bounceP1;
-        bounce_list[1] = bounceP2;
-        bounce_list[2] = bounceP3;
-        bounce_list[3] = bounceP4;
+        GSAB = new Trajectory[] {pwFileToPath("PathWeaver/Paths/GSABv2.path", config)};
+        GSAR = new Trajectory[] {pwFileToPath("PathWeaver/Paths/GSARv4.path", config)};
+        GSBR = new Trajectory[] {pwFileToPath("PathWeaver/Paths/GSBRv1.path", config)};
+        GSBB = new Trajectory[] {pwFileToPath("PathWeaver/Paths/GSBBv1.path", config)};
+        slalom = new Trajectory[] {pwFileToPath("PathWeaver/Paths/Slalomv4.path", config)};
+        barrel = new Trajectory[] {pwFileToPath("PathWeaver/Paths/BarrelRacingv1.path", config)};
+        bounce = new Trajectory[] {
+            pwFileToPath("PathWeaver/Paths/BounceP1.path", config),
+            pwFileToPath("PathWeaver/Paths/BounceP2.path", config),
+            pwFileToPath("PathWeaver/Paths/BounceP3.path", config),
+            pwFileToPath("PathWeaver/Paths/BounceP4.path", config)
+        };
+
                 
 
     }
@@ -88,48 +87,27 @@ public class Paths {
         }
     }
 
-    // public Trajectory getDetectedPath() {
-    //     if (pathIndex == 1.0) {
-    //         System.out.println("RED A---------------");
-    //         return GSAR;
-    //     } else if (pathIndex == 2.0) {
-    //         System.out.println("Blue A-------------");
-    //         return GSAB;
-    //     } else {
-    //         System.out.println("TRAJECTORY NOT DETECTED!!!");
-    //         return new Trajectory();
-            
-    //     }
-    // }
+    public Trajectory pwFileToPath(String json, TrajectoryConfig config) {
+        try {
+            return Trajectory6391.importPathToQuinticTrajectory("PathWeaver/Paths/GSABv2.path", config);
+        } catch (IOException e) {
+            DriverStation.reportError("Unable to open trajectory: " + json, e.getStackTrace());
+            return new Trajectory();
+        }
+    }
     public Pair<Trajectory[], Boolean> getPathByIndex(double pIndex) {
         int index = (int)pIndex;
         
         switch (index) {
-            case PathMapper.GSAR: return new Pair<Trajectory[], Boolean>(GSAR_list, true);
-            case PathMapper.GSAB: return new Pair<>(GSAB_list, true);
-            case PathMapper.GSBR: return new Pair<>(GSBR_list, true);
-            case PathMapper.GSBB: return new Pair<>(GSBB_list, true);
-            case PathMapper.SLALOM: return new Pair<>(slalom_list, false);
-            case PathMapper.BARREL: return new Pair<>(barrel_list, false);
-            case PathMapper.BOUNCE: return new Pair<>(bounce_list, false);
+            case PathMapper.GSAR: return new Pair<Trajectory[], Boolean>(GSAR, true);
+            case PathMapper.GSAB: return new Pair<>(GSAB, true);
+            case PathMapper.GSBR: return new Pair<>(GSBR, true);
+            case PathMapper.GSBB: return new Pair<>(GSBB, true);
+            case PathMapper.SLALOM: return new Pair<>(slalom, false);
+            case PathMapper.BARREL: return new Pair<>(barrel, false);
+            case PathMapper.BOUNCE: return new Pair<>(bounce, false);
             default:  return null; 
         }
     }
-    
-//  PREVIOUS CODE:
-    // public Trajectory getPathByIndex(double pIndex) {
-    //     int index = (int)pIndex;
-        
-    //     switch (index) {
-    //         case 1: return GSAR;
-    //         case 2: return GSAB;
-    //         case 3: return GSBR;
-    //         case 4: return GSBB;
-    //         case 5: return slalom;
-    //         case 6: return barrel;
-    //         case 7: return bounce;
-    //         default:  return null; 
-    //     }
-    // }
     
 }
