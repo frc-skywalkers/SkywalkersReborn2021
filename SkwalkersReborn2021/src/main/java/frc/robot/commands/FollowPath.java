@@ -14,6 +14,7 @@ import frc.robot.RobotContainer;
 
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import frc.robot.commands.DetectPath;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -36,6 +37,7 @@ public class FollowPath extends CommandBase {
   
   private Drivetrain drive;
   private Intake intake;
+  private Arm arm;
   //private MyRamSete myRamSete;
   private double pathIndex = -1;
   Paths paths;
@@ -44,6 +46,7 @@ public class FollowPath extends CommandBase {
   public FollowPath(RobotContainer rc) {
     drive = rc.getDriveTrain();
     intake = rc.getIntake();
+    arm = rc.getArm();
     paths = rc.getPaths();
     //myRamSete = new MyRamSete(drive);
     addRequirements(drive);
@@ -101,7 +104,7 @@ public class FollowPath extends CommandBase {
         autoNav.addCommands(getRamSeteCommand(traj[i], i));
       }
       autoNav.addCommands(new InstantCommand(() -> drive.tankDriveVolts(0, 0)));
-      autoNav.schedule();
+      autoNav.raceWith(new RunCommand(() -> arm.moveArm(0.1), intake)).schedule();
 
     }
   }

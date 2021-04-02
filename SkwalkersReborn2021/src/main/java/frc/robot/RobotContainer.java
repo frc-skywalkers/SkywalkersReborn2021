@@ -84,6 +84,11 @@ public class RobotContainer {
     return drive;
   }
 
+  public Arm getArm()
+  {
+    return arm;
+  }
+
   public Paths getPaths()
   {
     return paths;
