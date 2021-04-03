@@ -74,6 +74,13 @@ public class Paths {
         bounce_list[1] = bounceP2;
         bounce_list[2] = bounceP3;
         bounce_list[3] = bounceP4;
+        GSAR_list[0] = GSAR;
+        GSAB_list[0] = GSAB;
+        GSBR_list[0] = GSBR;
+        GSBB_list[0] = GSBB;
+        slalom_list[0] = slalom;
+        barrel_list[0] = barrel;
+        
                 
 
     }
