@@ -17,13 +17,7 @@ import frc.robot.Constants.DriveConstants;
 
 public class Paths {
 
-    private Trajectory[] bounce_list;
-    private Trajectory[] GSAB_list;
-    private Trajectory[] GSAR_list;
-    private Trajectory[] GSBR_list;
-    private Trajectory[] GSBB_list;
-    private Trajectory[] slalom_list;
-    private Trajectory[] barrel_list;
+    
     private Trajectory bounceP1;
     private Trajectory bounceP2;
     private Trajectory bounceP3;
@@ -35,7 +29,13 @@ public class Paths {
     private Trajectory GSBR;
     private Trajectory GSBB;
     
-    
+    private Trajectory[] bounce_list = new Trajectory[4];
+    private Trajectory[] GSAB_list = new Trajectory[1];
+    private Trajectory[] GSAR_list = new Trajectory[1];
+    private Trajectory[] GSBR_list = new Trajectory[1];
+    private Trajectory[] GSBB_list = new Trajectory[1];
+    private Trajectory[] slalom_list = new Trajectory[1];
+    private Trajectory[] barrel_list = new Trajectory[1];
     
     
     
@@ -44,8 +44,8 @@ public class Paths {
     public class PathMapper{
         static final int DETECTION = 8;
         static final int GSAR = 1;
-        static final int GSAB = 2;
-        static final int GSBR = 3;
+        static final int GSBR = 2;
+        static final int GSAB = 3;
         static final int GSBB = 4;
         static final int SLALOM = 5;
         static final int BARREL = 6;
@@ -66,7 +66,7 @@ public class Paths {
         bounceP2 = jsonToPath("paths/BounceP2.wpilib.json");
         bounceP3 = jsonToPath("paths/BounceP3.wpilib.json");
         bounceP4 = jsonToPath("paths/BounceP4.wpilib.json");
-        bounce_list[0] = bounceP1;
+        //bounce_list[0] = bounceP1;
         bounce_list[1] = bounceP2;
         bounce_list[2] = bounceP3;
         bounce_list[3] = bounceP4;

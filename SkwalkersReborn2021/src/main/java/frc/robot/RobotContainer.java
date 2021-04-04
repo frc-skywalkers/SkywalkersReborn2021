@@ -129,7 +129,7 @@ public class RobotContainer {
                 new PrintCommand("START OF SEQUENTIAL COMMANDS"),
                 new MoveArmForTime(arm, ArmConstants.kLowerArmSpeed, 3),
                 new PrintCommand("START OF WAIT"),
-                new WaitCommand(3),
+                //new WaitCommand(0.5),
                 new PrintCommand("DETECT PATH"),
                 new DetectPath(this),
                 new PrintCommand("DETECTION DONE"),

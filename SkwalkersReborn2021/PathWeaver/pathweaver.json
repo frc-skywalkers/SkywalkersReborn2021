@@ -1,9 +1,9 @@
 {
   "lengthUnit": "Meter",
   "exportUnit": "Always Meters",
-  "maxVelocity": 0.5,
-  "maxAcceleration": 0.2,
+  "maxVelocity": 2.0,
+  "maxAcceleration": 0.75,
   "wheelBase": 0.65704,
-  "gameName": "Bounce Path",
+  "gameName": "Galactic Search B",
   "outputDir": ".."
 }
