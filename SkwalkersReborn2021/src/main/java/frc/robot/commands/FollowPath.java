@@ -46,7 +46,6 @@ public class FollowPath extends CommandBase {
   public FollowPath(RobotContainer rc) {
     drive = rc.getDriveTrain();
     intake = rc.getIntake();
-    arm = rc.getArm();
     paths = rc.getPaths();
     //myRamSete = new MyRamSete(drive);
     addRequirements(drive);
@@ -104,7 +103,7 @@ public class FollowPath extends CommandBase {
         autoNav.addCommands(getRamSeteCommand(traj[i], i));
       }
       autoNav.addCommands(new InstantCommand(() -> drive.tankDriveVolts(0, 0)));
-      autoNav.raceWith(new RunCommand(() -> arm.moveArm(0.1), intake)).schedule();
+      autoNav.schedule();
 
     }
   }

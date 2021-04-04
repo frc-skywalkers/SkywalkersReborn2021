@@ -91,14 +91,7 @@ public class Paths {
         }
     }
 
-    public Trajectory pwFileToPath(String json, TrajectoryConfig config) {
-        try {
-            return Trajectory6391.importPathToQuinticTrajectory("PathWeaver/Paths/GSABv2.path", config);
-        } catch (IOException e) {
-            DriverStation.reportError("Unable to open trajectory: " + json, e.getStackTrace());
-            return new Trajectory();
-        }
-    }
+    
     public Pair<Trajectory[], Boolean> getPathByIndex(double pIndex) {
         int index = (int)pIndex;
         
