@@ -84,10 +84,10 @@ public class FollowPath extends CommandBase {
       // ).schedule();
       SequentialCommandGroup galacticSearch =  new SequentialCommandGroup();
       for (int i = 0; i < traj.length; i++) {
-        galacticSearch.addCommands(new ParallelCommandGroup(getRamSeteCommand(traj[i], i), new RunCommand(intake::intake, intake)));
+        galacticSearch.addCommands(getRamSeteCommand(traj[i], i).deadlineWith(new RunCommand(intake::intake, intake)));
       }
-      galacticSearch.addCommands(new InstantCommand(() -> drive.tankDriveVolts(0, 0)), new InstantCommand(intake::stopRoller));
-      galacticSearch.schedule();
+      galacticSearch.addCommands(new RunCommand(intake::stopRoller, intake));
+      galacticSearch.andThen(new InstantCommand(() -> drive.tankDriveVolts(0, 0))).schedule();
     }
     else{ //AUTONAV
       // new SequentialCommandGroup(
