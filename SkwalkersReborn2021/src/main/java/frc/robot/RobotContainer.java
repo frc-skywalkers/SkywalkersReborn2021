@@ -12,6 +12,7 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Paths.PathMapper;
+import frc.robot.commands.AutoDemo;
 import frc.robot.commands.DetectPath;
 import frc.robot.commands.MoveArmForTime;
 import frc.robot.commands.FollowPath;
@@ -66,6 +67,7 @@ public class RobotContainer {
     chooser.addOption("Slalom", PathMapper.SLALOM);
     chooser.addOption("Barrel", PathMapper.BARREL);
     chooser.addOption("Bounce", PathMapper.BOUNCE);
+    chooser.addOption("Demo", 10);
 
 
     SmartDashboard.putData("Autonmous", chooser);
@@ -84,7 +86,10 @@ public class RobotContainer {
     return drive;
   }
 
-  
+  public Arm getArm()
+  {
+    return arm;
+  }
 
   public Paths getPaths()
   {
@@ -135,6 +140,8 @@ public class RobotContainer {
                 new PrintCommand("DETECTION DONE"),
                 new FollowPath(this)
               );
+    } else if (selected == 10) {
+      return new AutoDemo(this);
     } else {
       // return mrs.getRamSeteCommand(paths.getPathByIndex(selected))
       //   .alongWith(new RunCommand(intake::intake, intake))

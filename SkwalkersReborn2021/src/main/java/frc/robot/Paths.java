@@ -28,6 +28,8 @@ public class Paths {
     private Trajectory GSAB;
     private Trajectory GSBR;
     private Trajectory GSBB;
+    public Trajectory GSAR_demo;
+    public Trajectory demo_straight;
     
     private Trajectory[] bounce_list = new Trajectory[4];
     private Trajectory[] GSAB_list = new Trajectory[1];
@@ -36,6 +38,7 @@ public class Paths {
     private Trajectory[] GSBB_list = new Trajectory[1];
     private Trajectory[] slalom_list = new Trajectory[1];
     private Trajectory[] barrel_list = new Trajectory[1];
+    private Trajectory[] demo_list = new Trajectory[2];
     
     
     
@@ -61,21 +64,30 @@ public class Paths {
 
         slalom = jsonToPath("paths/Slalomv4.wpilib.json");
         barrel = jsonToPath("paths/BarrelRacingv1.wpilib.json");
-        // bounce = jsonToPath("paths/Bouncev1.wpilib.json");
+
         bounceP1 = jsonToPath("paths/BounceP1.wpilib.json");
         bounceP2 = jsonToPath("paths/BounceP2.wpilib.json");
         bounceP3 = jsonToPath("paths/BounceP3.wpilib.json");
         bounceP4 = jsonToPath("paths/BounceP4.wpilib.json");
-        //bounce_list[0] = bounceP1;
+
+        GSAR_demo = jsonToPath("paths/GSAR_demo.wpilib.json");
+        demo_straight = jsonToPath("demo_straight.wpilib.json");
+
+        bounce_list[0] = bounceP1;
         bounce_list[1] = bounceP2;
         bounce_list[2] = bounceP3;
         bounce_list[3] = bounceP4;
+
         GSAR_list[0] = GSAR;
         GSAB_list[0] = GSAB;
         GSBR_list[0] = GSBR;
         GSBB_list[0] = GSBB;
+
         slalom_list[0] = slalom;
         barrel_list[0] = barrel;
+
+        demo_list[0] = GSAR_demo;
+        demo_list[1] = demo_straight;
         
                 
 

@@ -15,6 +15,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -22,10 +24,16 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.util.Units;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 
 public class Drivetrain extends SubsystemBase {
   /** Creates a new Drivetrain. */
@@ -229,6 +237,32 @@ public class Drivetrain extends SubsystemBase {
     m_yEntry.setNumber(translation.getY());
     SmartDashboard.putNumber("x", Units.metersToFeet(translation.getX()));
     SmartDashboard.putNumber("y", Units.metersToFeet(translation.getX()));
+  }
+
+  public Command createCommandForTrajectory(Trajectory trajectory, Boolean initPose) {
+    RamseteCommand ramseteCommand = new RamseteCommand(
+        trajectory,
+        this::getPose,
+        new RamseteController(
+          AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
+        new SimpleMotorFeedforward(
+          DriveConstants.ksVolts, 
+          DriveConstants.kvVoltSecondsPerMeter, 
+          DriveConstants.kaVoltSecondsSquaredPerMeter),
+        DriveConstants.kDriveKinematics,
+        this::getWheelSpeeds,
+        new PIDController(DriveConstants.kPDriveVel, 0, 0),
+        new PIDController(DriveConstants.kPDriveVel, 0, 0),
+        this::tankDriveVolts,
+        this
+    );
+    if (initPose) {
+      var reset =  new InstantCommand(() -> this.resetOdometry(trajectory.getInitialPose()));
+      return reset.andThen(ramseteCommand.andThen(() -> stop()));
+    }
+    else {
+      return ramseteCommand.andThen(() -> stop());
+    }
   }
 
   
