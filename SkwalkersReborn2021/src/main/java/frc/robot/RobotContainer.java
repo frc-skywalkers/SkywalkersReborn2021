@@ -4,8 +4,11 @@
 
 package frc.robot;
 
+import org.ietf.jgss.Oid;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.ArmConstants;
@@ -16,6 +19,7 @@ import frc.robot.commands.DetectPath;
 import frc.robot.commands.MoveArmForTime;
 import frc.robot.commands.FollowPath;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -37,6 +41,7 @@ public class RobotContainer {
   private final Drivetrain drive = new Drivetrain();
   private final Intake intake = new Intake();
   private final Arm arm = new Arm();
+  private final Climber climber = new Climber();
 
   private XboxController driveController = new XboxController(OIConstants.kDriverControllerPort);
 
@@ -111,6 +116,10 @@ public class RobotContainer {
     new JoystickButton(driveController, OIConstants.kLiftArmButton.value).whileHeld(() -> arm.moveArm(ArmConstants.kLiftArmSpeed));
 
     new JoystickButton(driveController, OIConstants.kLowerArmButton.value).whileHeld(() -> arm.moveArm(ArmConstants.kLowerArmSpeed));
+
+    new JoystickButton(driveController, OIConstants.kClimbButton.value).whileHeld(() -> climber.climb());
+
+    new JoystickButton(driveController, OIConstants.kDescendButton.value).whileHeld(() -> climber.lower());
 
   
   }

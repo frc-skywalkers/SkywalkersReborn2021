@@ -34,6 +34,8 @@ public final class Constants {
         public static final Button kOuttakeButton = Button.kX;
         public static final Button kLiftArmButton = Button.kBumperRight;
         public static final Button kLowerArmButton = Button.kBumperLeft;
+        public static final Button kClimbButton = Button.kStart;
+        public static final Button kDescendButton = Button.kBack;
         
     }
     public static final class AutoConstants {
@@ -96,5 +98,11 @@ public final class Constants {
         public static final double kLiftArmSpeed = 0.15;
         public static final double kLowerArmSpeed = -0.05;
 
+    }
+
+    public static final class ClimberConstants {
+        public static final int kClimberPort = 14;
+        public static final boolean kClimberInvert = false;
+        public static final double kClimbSpeed = 0.5;
     }
 }

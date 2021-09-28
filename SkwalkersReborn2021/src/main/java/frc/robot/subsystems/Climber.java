@@ -4,11 +4,30 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ClimberConstants;
 
 public class Climber extends SubsystemBase {
   /** Creates a new Climber. */
-  public Climber() {}
+
+  private final CANSparkMax climber = new CANSparkMax(ClimberConstants.kClimberPort, MotorType.kBrushless);
+
+  public Climber() {
+    climber.restoreFactoryDefaults();
+    climber.setInverted(ClimberConstants.kClimberInvert);
+
+  }
+
+  public void climb() {
+    climber.set(ClimberConstants.kClimbSpeed);
+  }
+
+  public void lower() {
+    climber.set(-ClimberConstants.kClimbSpeed);
+  }
 
   @Override
   public void periodic() {
