@@ -37,7 +37,7 @@ public class AutoDemo extends SequentialCommandGroup {
       new MoveArmForTime(arm, ArmConstants.kLowerArmSpeed, 2),
       drive.createCommandForTrajectory(paths.GSAR_demo, true).deadlineWith(new RunCommand(intake::intake, intake)),
       new MoveArmForTime(arm, ArmConstants.kLiftArmSpeed, 2),
-      drive.createCommandForTrajectory(paths.demo_straight, false),
+      drive.createCommandForTrajectory(paths.demo_straight, false).deadlineWith(new RunCommand(() -> arm.moveArm(0.01), arm)),
       new RunCommand(intake::outtake, intake).withTimeout(3)
     );
   }

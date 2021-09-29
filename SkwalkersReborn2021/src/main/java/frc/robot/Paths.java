@@ -71,7 +71,7 @@ public class Paths {
         bounceP4 = jsonToPath("paths/BounceP4.wpilib.json");
 
         GSAR_demo = jsonToPath("paths/GSAR_demo.wpilib.json");
-        demo_straight = jsonToPath("demo_straight.wpilib.json");
+        demo_straight = jsonToPath("paths/demo_straight.wpilib.json");
 
         bounce_list[0] = bounceP1;
         bounce_list[1] = bounceP2;
