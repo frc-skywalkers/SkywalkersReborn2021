@@ -34,8 +34,10 @@ public final class Constants {
         public static final Button kOuttakeButton = Button.kX;
         public static final Button kLiftArmButton = Button.kBumperRight;
         public static final Button kLowerArmButton = Button.kBumperLeft;
-        public static final Button kClimbButton = Button.kStart;
-        public static final Button kDescendButton = Button.kBack;
+        public static final Button kClimbButton = Button.kStickLeft;
+        public static final Button kDescendButton = Button.kStickRight;
+        public static final Button kStopClimberButton = Button.kBack;
+        
         
     }
     public static final class AutoConstants {
@@ -59,7 +61,7 @@ public final class Constants {
         public static final TalonFXInvertType kLeftInvertType = TalonFXInvertType.CounterClockwise;
         public static final TalonFXInvertType kRightInvertType = TalonFXInvertType.Clockwise;
 
-        public static final double kDriveSpeed = 0.1;
+        public static final double kDriveSpeed = 0.5;
 
         public static final double kTrackWidth = 0.5558;//0.65704; // meters->needs to be inputted
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidth);
@@ -103,7 +105,8 @@ public final class Constants {
     public static final class ClimberConstants {
         public static final int kClimberPort = 14;
         public static final boolean kClimberInvert = false;
-        public static final double kClimbSpeed = 0.5;
+        public static final double kClimbSpeed = 1.0;
+		
     }
 
 }
