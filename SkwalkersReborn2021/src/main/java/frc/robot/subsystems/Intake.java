@@ -22,6 +22,7 @@ public class Intake extends SubsystemBase {
 
     
     roller.setInverted(Constants.IntakeConstants.kRollerInvert);
+    roller.set(Constants.IntakeConstants.kIntakeSpeed);
 
   }
 

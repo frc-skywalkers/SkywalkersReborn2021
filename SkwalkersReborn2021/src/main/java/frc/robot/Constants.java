@@ -34,9 +34,9 @@ public final class Constants {
         public static final Button kOuttakeButton = Button.kX;
         public static final Button kLiftArmButton = Button.kBumperRight;
         public static final Button kLowerArmButton = Button.kBumperLeft;
-        public static final Button kClimbButton = Button.kStickLeft;
-        public static final Button kDescendButton = Button.kStickRight;
-        public static final Button kStopClimberButton = Button.kBack;
+        public static final Button kClimbButton = Button.kStart;
+        public static final Button kDescendButton = Button.kBack;
+        public static final Button kStopClimberButton = Button.kStickRight;
         
         
     }
@@ -61,7 +61,7 @@ public final class Constants {
         public static final TalonFXInvertType kLeftInvertType = TalonFXInvertType.CounterClockwise;
         public static final TalonFXInvertType kRightInvertType = TalonFXInvertType.Clockwise;
 
-        public static final double kDriveSpeed = 0.5;
+        public static final double kDriveSpeed = 0.65;
 
         public static final double kTrackWidth = 0.5558;//0.65704; // meters->needs to be inputted
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidth);
@@ -90,22 +90,22 @@ public final class Constants {
         
         public static final boolean kRollerInvert = false;
 
-        public static final double kIntakeSpeed = -0.6;
+        public static final double kIntakeSpeed = -0.5;
         public static final double kOuttakeSpeed = 0.5;
     }
 
     public static final class ArmConstants {
         public static final int kArmPort = 5;
         public static final boolean kArmInvert = true;
-        public static final double kLiftArmSpeed = 0.15;
-        public static final double kLowerArmSpeed = -0.05;
+        public static final double kLiftArmSpeed = 0.25;
+        public static final double kLowerArmSpeed = -0.25;
 
     }
 
     public static final class ClimberConstants {
         public static final int kClimberPort = 14;
         public static final boolean kClimberInvert = false;
-        public static final double kClimbSpeed = 1.0;
+        public static final double kClimbSpeed = 0.9;
 		
     }
 

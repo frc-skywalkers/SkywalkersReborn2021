@@ -119,9 +119,15 @@ public class RobotContainer {
 
     new JoystickButton(driveController, OIConstants.kLowerArmButton.value).whileHeld(() -> arm.moveArm(ArmConstants.kLowerArmSpeed));
 
-    new JoystickButton(driveController, OIConstants.kClimbButton.value).whileHeld(() -> climber.climb());
+    new JoystickButton(driveController, OIConstants.kClimbButton.value).whenPressed(() -> climber.climb());
 
-    new JoystickButton(driveController, OIConstants.kDescendButton.value).whileHeld(() -> climber.lower());
+    new JoystickButton(driveController, OIConstants.kDescendButton.value).whenPressed(() -> climber.lower());
+
+    new JoystickButton(driveController, OIConstants.kClimbButton.value).whenReleased(() -> climber.stop());
+
+    new JoystickButton(driveController, OIConstants.kDescendButton.value).whenReleased(() -> climber.stop());
+
+    new JoystickButton(driveController, OIConstants.kStopClimberButton.value).whenReleased(() -> climber.stop());
 
   
   }

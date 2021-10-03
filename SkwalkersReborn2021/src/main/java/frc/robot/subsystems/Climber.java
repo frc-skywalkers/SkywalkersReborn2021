@@ -18,6 +18,7 @@ public class Climber extends SubsystemBase {
   public Climber() {
     climber.restoreFactoryDefaults();
     climber.setInverted(ClimberConstants.kClimberInvert);
+    climber.set(0);
 
   }
 
@@ -27,6 +28,10 @@ public class Climber extends SubsystemBase {
 
   public void lower() {
     climber.set(-ClimberConstants.kClimbSpeed);
+  }
+
+  public void stop() {
+    climber.set(0);
   }
 
   @Override
